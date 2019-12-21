@@ -1,0 +1,14 @@
+version 0.1:
+
+1. Make two folders:
+1.1. test
+1.2. src
+
+2. Write main file cut.js
+3. make file in test folder testLib.js
+4. make file in src folder lib.js
+5. displayMessage.js
+6. formatMessage function.
+7. getStructuredContents function.
+8. loadContents Function.
+9. parsedInput function.
