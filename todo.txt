@@ -7,7 +7,7 @@ version 0.1:
 2. Write main file cut.js
 3. make file in test folder testLib.js
 4. make file in src folder lib.js
-5. displayMessage.js
+5. displayMessage function.
 6. formatMessage function.
 7. getStructuredContents function.
 8. loadContents Function.
