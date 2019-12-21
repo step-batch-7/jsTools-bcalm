@@ -1,3 +1,8 @@
+const getStructuredContents = function(fileContents) {
+  const data = fileContents.split("\n");
+  return data.map(e => [e]);
+};
+
 const formatMessage = function(fileContents, delimiter) {
   return fileContents.map(line => line[0].split(delimiter));
 };
@@ -7,4 +12,4 @@ const displayMessage = function(content, number) {
   return message.join("\n");
 };
 
-module.exports = { formatMessage, displayMessage };
+module.exports = { formatMessage, displayMessage, getStructuredContents };

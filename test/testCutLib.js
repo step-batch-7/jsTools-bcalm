@@ -22,3 +22,12 @@ describe("#formatMessage", () => {
     assert.deepStrictEqual(actual, expected);
   });
 });
+
+describe("#getStructuredContents", () => {
+  it("should give whole line contents in an array", () => {
+    const fileContents = "hello\nhow are you\nI am fine.";
+    const actual = lib.getStructuredContents(fileContents);
+    const expected = [["hello"], ["how are you"], ["I am fine."]];
+    assert.deepStrictEqual(actual, expected);
+  });
+});
