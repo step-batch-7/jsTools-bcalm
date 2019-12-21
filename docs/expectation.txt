@@ -1,0 +1,22 @@
+Delimiter and field flow:
+1. node cut.js -d" " -f1-2 one.txt
+2. node cut.js -d" " -f1-2,3-4 one.txt
+3. node cut.js -f3 one.txt
+4. node cut.js -d" " -f1-2 one.txt two.txt three.txt
+5. node cut.js -d" " -f1,2
+6. node cut.js -d" " -f1-2,3-4
+7. node cut.js -f3 
+8. node cut.s -d" " -f3 -s
+9. node cut.s -d" " -f3 -s one.txt
+
+
+Byte flow:
+1. node cut.js -b2 one.txt
+2. node cut.js -b2
+3. node cut.js -b2,3 -n one.txt
+
+
+Character flow: 
+1. node cut.js -c2 one.txt
+2. node cut.js -c2
+3. node cut.js -c2,3 one.txt
