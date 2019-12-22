@@ -1,5 +1,8 @@
-const loadContents = function(filePath, reader) {
-  return reader(filePath, "utf8");
+const loadContents = function(filePath, reader, isFileExists) {
+  if (isFileExists(filePath)) {
+    return reader(filePath, "utf8");
+  }
+  return "No such file or directory.";
 };
 
 const getStructuredContents = function(fileContents) {

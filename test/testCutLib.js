@@ -46,7 +46,7 @@ describe("#loadContents", function() {
         return false;
       }
     );
-    const expectedValue = "[]";
+    const expectedValue = "No such file or directory.";
     assert.deepStrictEqual(actualValue, expectedValue);
   });
 
