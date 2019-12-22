@@ -1,8 +1,9 @@
-const loadContents = function(filePath, reader, isFileExists) {
-  if (isFileExists(filePath)) {
-    return reader(filePath, "utf8");
-  }
-  return "No such file or directory.";
+const isFileExists = function(filePath, exists) {
+  return exists(filePath);
+};
+
+const loadContents = function(filePath, reader) {
+  return reader(filePath, "utf8");
 };
 
 const getStructuredContents = function(fileContents) {
@@ -23,5 +24,6 @@ module.exports = {
   formatMessage,
   displayMessage,
   getStructuredContents,
-  loadContents
+  loadContents,
+  isFileExists
 };
