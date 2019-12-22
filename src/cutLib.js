@@ -1,3 +1,7 @@
+const loadContents = function(filePath, reader) {
+  return reader(filePath, "utf8");
+};
+
 const getStructuredContents = function(fileContents) {
   const data = fileContents.split("\n");
   return data.map(e => [e]);
@@ -12,4 +16,9 @@ const displayMessage = function(content, number) {
   return message.join("\n");
 };
 
-module.exports = { formatMessage, displayMessage, getStructuredContents };
+module.exports = {
+  formatMessage,
+  displayMessage,
+  getStructuredContents,
+  loadContents
+};
