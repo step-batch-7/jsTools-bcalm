@@ -54,8 +54,8 @@ describe("#isFileExists", () => {
   });
 
   it("should give false if file isn't given", () => {
-    const actual = lib.isFileExists("./noFile.txt", function(path) {
-      assert.strictEqual(path, "./noFile.txt");
+    const actual = lib.isFileExists("noFile.txt", function(path) {
+      assert.strictEqual(path, "noFile.txt");
       return false;
     });
     assert.isFalse(actual);
@@ -64,16 +64,16 @@ describe("#isFileExists", () => {
 
 describe("#parseInput", () => {
   it("should read the input and separate if there is space b/w delimiter and delimiter option", () => {
-    const cmdLineArgs = ["-d", "e", "-f", "1", "./one.txt"];
+    const cmdLineArgs = ["-d", "e", "-f", "1", "one.txt"];
     const actual = lib.parseInput(cmdLineArgs);
-    const expected = { delimiter: "e", fieldValue: "1", filePath: "./one.txt" };
+    const expected = { delimiter: "e", fieldValue: "1", fileName: "one.txt" };
     assert.deepStrictEqual(actual, expected);
   });
 
   it("should read the input and separate if there is no space b/w delimiter and delimiter option", () => {
-    const cmdLineArgs = ["-de", "-f1", "./one.txt"];
+    const cmdLineArgs = ["-de", "-f1", "one.txt"];
     const actual = lib.parseInput(cmdLineArgs);
-    const expected = { delimiter: "e", fieldValue: "1", filePath: "./one.txt" };
+    const expected = { delimiter: "e", fieldValue: "1", fileName: "one.txt" };
     assert.deepStrictEqual(actual, expected);
   });
 });
