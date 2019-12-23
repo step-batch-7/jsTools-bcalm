@@ -39,14 +39,14 @@ const displayMessage = function(content, number) {
 
 const performAction = function(fileFunctions, cmdLineArgs) {
   const options = parseInput(cmdLineArgs);
-  if (!isValidInput(cmdLineArgs)) return error.optionError();
+  if (!isValidInput(cmdLineArgs)) return { error: error.optionError() };
   if (!isFileExists(options.fileName, fileFunctions.existsFile)) {
-    return error.noFileMessage(options.fileName);
+    return { error: error.noFileMessage(options.fileName) };
   }
   const contents = loadContents(options.fileName, fileFunctions.readFile);
   const structuredContent = getStructuredContents(contents);
   const format = formatMessage(structuredContent, options.delimiter);
-  return displayMessage(format, options.fieldValue);
+  return { output: displayMessage(format, options.fieldValue) };
 };
 
 module.exports = {

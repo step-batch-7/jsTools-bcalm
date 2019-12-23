@@ -93,8 +93,8 @@ describe("performAction", function() {
       }
     };
     const actual = lib.performAction(fileFunctions, cmdLineArgs);
-    const expected = "[]";
-    assert.strictEqual(actual, expected);
+    const expected = { output: "[]" };
+    assert.deepStrictEqual(actual, expected);
   });
 
   it("should give error if there is no file", () => {
@@ -113,8 +113,8 @@ describe("performAction", function() {
       }
     };
     const actual = lib.performAction(fileFunctions, cmdLineArgs);
-    const expected = "cut: todo.txt: No such file or directory";
-    assert.strictEqual(actual, expected);
+    const expected = { error: "cut: todo.txt: No such file or directory" };
+    assert.deepStrictEqual(actual, expected);
   });
 
   it("should give error if there is no file", () => {
@@ -131,9 +131,11 @@ describe("performAction", function() {
       }
     };
     const actual = lib.performAction(fileFunctions, cmdLineArgs);
-    const expected =
-      "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]";
-    assert.strictEqual(actual, expected);
+    const expected = {
+      error:
+        "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]"
+    };
+    assert.deepStrictEqual(actual, expected);
   });
 });
 
