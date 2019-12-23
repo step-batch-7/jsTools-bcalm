@@ -116,4 +116,37 @@ describe("performAction", function() {
     const expected = "cut: todo.txt: No such file or directory";
     assert.strictEqual(actual, expected);
   });
+
+  it("should give error if there is no file", () => {
+    const cmdLineArgs = ["-d", "e", "1", "todo.txt"];
+    const fileFunctions = {
+      readFile: (path, encode) => {
+        assert.strictEqual(path, "todo.txt");
+        assert.strictEqual(encode, "utf8");
+        return "[]";
+      },
+      existsFile: path => {
+        assert.strictEqual(path, "todo.txt");
+        return true;
+      }
+    };
+    const actual = lib.performAction(fileFunctions, cmdLineArgs);
+    const expected =
+      "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]";
+    assert.strictEqual(actual, expected);
+  });
+});
+
+describe("#isValidInput", () => {
+  it("should give false if input isn't in correct format", () => {
+    const cmdLineArgs = ["-d", "e", "1", "todo.txt"];
+    const actual = lib.isValidInput(cmdLineArgs);
+    assert.isFalse(actual);
+  });
+
+  it("should give true if input is in correct form", () => {
+    const cmdLineArgs = ["-d", "e", "-f", "1", "todo.txt"];
+    const actual = lib.isValidInput(cmdLineArgs);
+    assert.isTrue(actual);
+  });
 });
