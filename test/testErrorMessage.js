@@ -18,3 +18,11 @@ describe("#optionError", () => {
     assert.strictEqual(actual, expected);
   });
 });
+
+describe("#displayDelimiterError", () => {
+  it("should give bad delimiter", () => {
+    const actual = error.displayDelimiterError();
+    const expected = "cut: bad delimiter";
+    assert.strictEqual(actual, expected);
+  });
+});

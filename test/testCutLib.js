@@ -93,7 +93,7 @@ describe("performAction", function() {
       }
     };
     const actual = lib.performAction(fileFunctions, cmdLineArgs);
-    const expected = { output: "[]" };
+    const expected = { output: "[]", error: "" };
     assert.deepStrictEqual(actual, expected);
   });
 
@@ -113,7 +113,10 @@ describe("performAction", function() {
       }
     };
     const actual = lib.performAction(fileFunctions, cmdLineArgs);
-    const expected = { error: "cut: todo.txt: No such file or directory" };
+    const expected = {
+      error: "cut: todo.txt: No such file or directory",
+      output: ""
+    };
     assert.deepStrictEqual(actual, expected);
   });
 
@@ -133,22 +136,28 @@ describe("performAction", function() {
     const actual = lib.performAction(fileFunctions, cmdLineArgs);
     const expected = {
       error:
-        "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]"
+        "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]",
+      output: ""
     };
     assert.deepStrictEqual(actual, expected);
   });
 });
 
-describe("#isValidInput", () => {
-  it("should give false if input isn't in correct format", () => {
+describe("#validateUserArgs", () => {
+  it("should give true if input isn't in correct format", () => {
     const cmdLineArgs = ["-d", "e", "1", "todo.txt"];
-    const actual = lib.isValidInput(cmdLineArgs);
-    assert.isFalse(actual);
+    const actual = lib.validateUserArgs(cmdLineArgs);
+    const expected = {
+      isError: true,
+      errorMessage:
+        "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]"
+    };
+    assert.deepStrictEqual(actual, expected);
   });
 
   it("should give true if input is in correct form", () => {
     const cmdLineArgs = ["-d", "e", "-f", "1", "todo.txt"];
-    const actual = lib.isValidInput(cmdLineArgs);
-    assert.isTrue(actual);
+    const actual = lib.validateUserArgs(cmdLineArgs);
+    const expected = { isError: false, errorType: null };
   });
 });

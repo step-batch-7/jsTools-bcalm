@@ -1,8 +1,10 @@
 const error = require("./errorMessage");
 
-const isValidInput = function(cmdLineArgs, options) {
+const validateUserArgs = function(cmdLineArgs, options) {
   const result = cmdLineArgs.map(e => e.match(/^-f.*/g));
-  return result.some(e => e != null);
+  if (!result.some(e => e != null))
+    return { isError: true, errorMessage: error.optionError() };
+  return { isError: false, errorType: null };
 };
 
 const parseInput = function(commandLineArgs) {
@@ -39,14 +41,16 @@ const displayMessage = function(content, number) {
 
 const performAction = function(fileFunctions, cmdLineArgs) {
   const options = parseInput(cmdLineArgs);
-  if (!isValidInput(cmdLineArgs)) return { error: error.optionError() };
+  const validationMessage = validateUserArgs(cmdLineArgs, options);
+  if (validationMessage.isError)
+    return { error: validationMessage.errorMessage, output: "" };
   if (!isFileExists(options.fileName, fileFunctions.existsFile)) {
-    return { error: error.noFileMessage(options.fileName) };
+    return { error: error.noFileMessage(options.fileName), output: "" };
   }
   const contents = loadContents(options.fileName, fileFunctions.readFile);
   const structuredContent = getStructuredContents(contents);
-  const format = formatMessage(structuredContent, options.delimiter);
-  return { output: displayMessage(format, options.fieldValue) };
+  const message = formatMessage(structuredContent, options.delimiter);
+  return { output: displayMessage(message, options.fieldValue), error: "" };
 };
 
 module.exports = {
@@ -57,5 +61,5 @@ module.exports = {
   isFileExists,
   parseInput,
   performAction,
-  isValidInput
+  validateUserArgs
 };
