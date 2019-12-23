@@ -32,11 +32,23 @@ const displayMessage = function(content, number) {
   return message.join("\n");
 };
 
+const performAction = function(fileFunctions, cmdLineArgs) {
+  const options = parseInput(cmdLineArgs);
+  if (!isFileExists(options.fileName, fileFunctions.existsFile)) {
+    return error.noFileMessage(options.fileName);
+  }
+  const contents = loadContents(options.fileName, fileFunctions.readFile);
+  const structuredContent = getStructuredContents(contents);
+  const format = formatMessage(structuredContent, options.delimiter);
+  return displayMessage(format, options.fieldValue);
+};
+
 module.exports = {
   formatMessage,
   displayMessage,
   getStructuredContents,
   loadContents,
   isFileExists,
-  parseInput
+  parseInput,
+  performAction
 };

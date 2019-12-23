@@ -77,3 +77,43 @@ describe("#parseInput", () => {
     assert.deepStrictEqual(actual, expected);
   });
 });
+
+describe("performAction", function() {
+  it("should give specific field of each line", function() {
+    const cmdLineArgs = ["-d", "e", "-f", "1", "todo.txt"];
+    const fileFunctions = {
+      readFile: (path, encode) => {
+        assert.strictEqual(path, "todo.txt");
+        assert.strictEqual(encode, "utf8");
+        return "[]";
+      },
+      existsFile: path => {
+        assert.strictEqual(path, "todo.txt");
+        return true;
+      }
+    };
+    const actual = lib.performAction(fileFunctions, cmdLineArgs);
+    const expected = "[]";
+    assert.strictEqual(actual, expected);
+  });
+
+  it("should give error if there is no file", () => {
+    const cmdLineArgs = ["-d", "e", "-f", "1", "todo.txt"];
+    const fileFunctions = {
+      readFile: (path, encode) => {
+        assert.strictEqual(path, "todo.txt");
+        assert.strictEqual(encode, "utf8");
+        return `cut: ${
+          cmdLineArgs[cmdLineArgs.length - 1]
+        }: No such file or directory`;
+      },
+      existsFile: path => {
+        assert.strictEqual(path, "todo.txt");
+        return false;
+      }
+    };
+    const actual = lib.performAction(fileFunctions, cmdLineArgs);
+    const expected = "cut: todo.txt: No such file or directory";
+    assert.strictEqual(actual, expected);
+  });
+});
