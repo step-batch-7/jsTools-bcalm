@@ -1,7 +1,9 @@
 const parseInput = function(commandLineArgs) {
   const command = {};
-  command.delimiter = commandLineArgs[commandLineArgs.indexOf("-d") + 1];
-  command.fieldValue = commandLineArgs[commandLineArgs.indexOf("-f") + 1];
+  const args = commandLineArgs.map(e => e.split(""));
+  const options = args.flat(Infinity);
+  command.delimiter = options[options.indexOf("d") + 1];
+  command.fieldValue = options[options.indexOf("f") + 1];
   command.filePath = commandLineArgs[commandLineArgs.length - 1];
   return command;
 };

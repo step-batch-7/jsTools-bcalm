@@ -63,8 +63,15 @@ describe("#isFileExists", () => {
 });
 
 describe("#parseInput", () => {
-  it("should read the input and separate them", () => {
+  it("should read the input and separate if there is space b/w delimiter and delimiter option", () => {
     const cmdLineArgs = ["-d", "e", "-f", "1", "./one.txt"];
+    const actual = lib.parseInput(cmdLineArgs);
+    const expected = { delimiter: "e", fieldValue: "1", filePath: "./one.txt" };
+    assert.deepStrictEqual(actual, expected);
+  });
+
+  it("should read the input and separate if there is no space b/w delimiter and delimiter option", () => {
+    const cmdLineArgs = ["-de", "-f1", "./one.txt"];
     const actual = lib.parseInput(cmdLineArgs);
     const expected = { delimiter: "e", fieldValue: "1", filePath: "./one.txt" };
     assert.deepStrictEqual(actual, expected);
