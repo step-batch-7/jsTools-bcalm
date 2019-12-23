@@ -46,7 +46,7 @@ describe("#loadContents", function() {
 
 describe("#isFileExists", () => {
   it("should give true if file is given", () => {
-    const actual = lib.loadContents("path", function(path) {
+    const actual = lib.isFileExists("path", function(path) {
       assert.strictEqual(path, "path");
       return true;
     });
@@ -54,10 +54,19 @@ describe("#isFileExists", () => {
   });
 
   it("should give false if file isn't given", () => {
-    const actual = lib.loadContents("./noFile.txt", function(path) {
+    const actual = lib.isFileExists("./noFile.txt", function(path) {
       assert.strictEqual(path, "./noFile.txt");
       return false;
     });
     assert.isFalse(actual);
+  });
+});
+
+describe("#parseInput", () => {
+  it("should read the input and separate them", () => {
+    const cmdLineArgs = ["-d", "e", "-f", "1", "./one.txt"];
+    const actual = lib.parseInput(cmdLineArgs);
+    const expected = { delimiter: "e", fieldValue: "1", filePath: "./one.txt" };
+    assert.deepStrictEqual(actual, expected);
   });
 });
