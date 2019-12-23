@@ -4,15 +4,15 @@ const validateUserArgs = function(cmdLineArgs, options) {
   const result = cmdLineArgs.map(e => e.match(/^-f.*/g));
   if (!result.some(e => e != null))
     return { isError: true, errorMessage: error.optionError() };
+  if (options.delimiter.length != 1)
+    return { isError: true, errorMessage: error.displayDelimiterError() };
   return { isError: false, errorType: null };
 };
 
 const parseInput = function(commandLineArgs) {
-  const args = commandLineArgs.map(e => e.split(""));
-  const options = args.flat(Infinity);
   const command = {};
-  command.delimiter = options[options.indexOf("d") + 1];
-  command.fieldValue = options[options.indexOf("f") + 1];
+  command.delimiter = commandLineArgs[commandLineArgs.indexOf("-d") + 1];
+  command.fieldValue = commandLineArgs[commandLineArgs.indexOf("-f") + 1];
   command.fileName = commandLineArgs[commandLineArgs.length - 1];
   return command;
 };

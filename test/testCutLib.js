@@ -69,13 +69,6 @@ describe("#parseInput", () => {
     const expected = { delimiter: "e", fieldValue: "1", fileName: "one.txt" };
     assert.deepStrictEqual(actual, expected);
   });
-
-  it("should read the input and separate if there is no space b/w delimiter and delimiter option", () => {
-    const cmdLineArgs = ["-de", "-f1", "one.txt"];
-    const actual = lib.parseInput(cmdLineArgs);
-    const expected = { delimiter: "e", fieldValue: "1", fileName: "one.txt" };
-    assert.deepStrictEqual(actual, expected);
-  });
 });
 
 describe("performAction", function() {
@@ -156,8 +149,10 @@ describe("#validateUserArgs", () => {
   });
 
   it("should give true if input is in correct form", () => {
+    const options = { delimiter: "e" };
     const cmdLineArgs = ["-d", "e", "-f", "1", "todo.txt"];
-    const actual = lib.validateUserArgs(cmdLineArgs);
+    const actual = lib.validateUserArgs(cmdLineArgs, options);
     const expected = { isError: false, errorType: null };
+    assert.deepEqual(actual, expected);
   });
 });
