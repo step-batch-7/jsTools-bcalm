@@ -9,7 +9,7 @@ describe("#displayMessage", () => {
       assert.strictEqual(message.error, "");
     };
     const data = "hello\nhow are you";
-    const options = { delimiter: "e", fileName: "todo.txt", fieldValue: [1] };
+    const options = { delimiter: "e", fileName: "todo.txt", fieldValue: "1" };
     cut.displayMessage(data, options, showResult);
   });
 });
@@ -118,8 +118,15 @@ describe("#performAction", () => {
 describe("#getStructure", () => {
   it("should give content after separating fields", () => {
     const lines = "hello\nI";
-    const actual = cut.getStructure(lines, "e", ["2"]);
+    const actual = cut.getStructure(lines, "e", "2");
     const expected = "llo\nI";
+    assert.deepStrictEqual(actual, expected);
+  });
+
+  it("should give content if separating fields are more than one", () => {
+    const lines = "hello\nI";
+    const actual = cut.getStructure(lines, "e", "1,2");
+    const expected = "hello\nI";
     assert.deepStrictEqual(actual, expected);
   });
 });

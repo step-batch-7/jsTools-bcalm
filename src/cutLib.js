@@ -1,7 +1,8 @@
 const { stdin, stdout } = process;
 const utils = require("./utils.js");
 
-const getStructure = function(lines, delimiter, range) {
+const getStructure = function(lines, delimiter, fieldValue) {
+  const range = utils.createRange(fieldValue);
   const formatLines = lines.split(delimiter);
   if (formatLines.length == 1) return lines;
   const desiredFields = range.map(element => formatLines[element - 1]);

@@ -25,7 +25,7 @@ const validateUserArgs = function(cmdLineArgs, options, fileFunctions) {
 const parseInput = function(commandLineArgs) {
   const command = {};
   command.delimiter = commandLineArgs[commandLineArgs.indexOf("-d") + 1];
-  command.fieldValue = [commandLineArgs[commandLineArgs.indexOf("-f") + 1]];
+  command.fieldValue = commandLineArgs[commandLineArgs.indexOf("-f") + 1];
   if (commandLineArgs.length % 2) {
     command.fileName = commandLineArgs[commandLineArgs.length - 1];
   }
@@ -36,9 +36,14 @@ const getLines = function(fileContents) {
   return fileContents.split("\n");
 };
 
+const createRange = function(fieldValue) {
+  return fieldValue.split(",");
+};
+
 module.exports = {
   displayError,
   validateUserArgs,
   parseInput,
-  getLines
+  getLines,
+  createRange
 };

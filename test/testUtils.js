@@ -27,14 +27,14 @@ describe("#parseInput", () => {
   it("should read the input and separate if there is space b/w delimiter and delimiter option", () => {
     const cmdLineArgs = ["-d", "e", "-f", "1", "one.txt"];
     const actual = utils.parseInput(cmdLineArgs);
-    const expected = { delimiter: "e", fieldValue: ["1"], fileName: "one.txt" };
+    const expected = { delimiter: "e", fieldValue: "1", fileName: "one.txt" };
     assert.deepStrictEqual(actual, expected);
   });
 
   it("shouldn't give file name as key if file is not specified", () => {
     const cmdLineArgs = ["-d", "e", "-f", "1"];
     const actual = utils.parseInput(cmdLineArgs);
-    const expected = { delimiter: "e", fieldValue: ["1"] };
+    const expected = { delimiter: "e", fieldValue: "1" };
     assert.deepStrictEqual(actual, expected);
   });
 });
@@ -182,5 +182,13 @@ describe("#validateUserArgs", () => {
     const actual = utils.validateUserArgs(cmdLineArgs, options, fileFunctions);
     const expected = { isError: false, errorType: null };
     assert.deepStrictEqual(actual, expected);
+  });
+});
+
+describe("#createRange", () => {
+  it("should create range of required field of each line", () => {
+    const actual = utils.createRange("1,2,3");
+    const expected = ["1", "2", "3"];
+    assert.deepEqual(actual, expected);
   });
 });
