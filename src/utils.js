@@ -24,7 +24,9 @@ const parseInput = function(commandLineArgs) {
   const command = {};
   command.delimiter = commandLineArgs[commandLineArgs.indexOf("-d") + 1];
   command.fieldValue = [commandLineArgs[commandLineArgs.indexOf("-f") + 1]];
-  command.fileName = commandLineArgs[commandLineArgs.length - 1];
+  if (commandLineArgs.length % 2) {
+    command.fileName = commandLineArgs[commandLineArgs.length - 1];
+  }
   return command;
 };
 
