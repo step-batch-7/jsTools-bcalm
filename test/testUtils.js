@@ -34,7 +34,7 @@ describe("#parseInput", () => {
   it("shouldn't give file name as key if file is not specified", () => {
     const cmdLineArgs = ["-d", "e", "-f", "1"];
     const actual = utils.parseInput(cmdLineArgs);
-    const expected = { delimiter: "e", fieldValue: "1" };
+    const expected = { delimiter: "e", fieldValue: "1", fileName: "" };
     assert.deepStrictEqual(actual, expected);
   });
 });
@@ -159,29 +159,6 @@ describe("#validateUserArgs", () => {
       errorMessage: "cut: todo.txt: No such file or directory"
     };
     assert.deepEqual(actual, expected);
-  });
-
-  it("shouldn't give fileName as a key if cmdLineArgs are even", () => {
-    const options = { delimiter: "e" };
-    const cmdLineArgs = ["-d", "e", "-f", "1"];
-    const callBack = function(content) {
-      assert.deepStrictEqual(content, ["h", "how ar"]);
-    };
-
-    const fileFunctions = {
-      readFile: (path, encode) => {
-        assert.strictEqual(path, "");
-        assert.strictEqual(encode, "utf8");
-        callBack(null, "h\nhow ar");
-      },
-      existsFile: path => {
-        assert.strictEqual(path, "");
-        return true;
-      }
-    };
-    const actual = utils.validateUserArgs(cmdLineArgs, options, fileFunctions);
-    const expected = { isError: false, errorType: null };
-    assert.deepStrictEqual(actual, expected);
   });
 });
 

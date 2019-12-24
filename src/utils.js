@@ -14,11 +14,8 @@ const validateUserArgs = function(cmdLineArgs, options, fileFunctions) {
     return { isError: true, errorMessage: error.optionError };
   if (options.delimiter.length != 1)
     return { isError: true, errorMessage: error.delimiterError };
-  if (options.fileName) {
-    if (!fileFunctions.existsFile(options.fileName)) {
-      return { isError: true, errorMessage: error.fileError };
-    }
-  }
+  if (!fileFunctions.existsFile(options.fileName))
+    return { isError: true, errorMessage: error.fileError };
   return { isError: false, errorType: null };
 };
 
@@ -26,9 +23,8 @@ const parseInput = function(commandLineArgs) {
   const command = {};
   command.delimiter = commandLineArgs[commandLineArgs.indexOf("-d") + 1];
   command.fieldValue = commandLineArgs[commandLineArgs.indexOf("-f") + 1];
-  if (commandLineArgs.length % 2) {
-    command.fileName = commandLineArgs[commandLineArgs.length - 1];
-  }
+  command.fileName = commandLineArgs[commandLineArgs.length - 1];
+  if (commandLineArgs.length % 2 == 0) command.fileName = "";
   return command;
 };
 
