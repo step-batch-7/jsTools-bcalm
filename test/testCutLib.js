@@ -3,7 +3,6 @@ const cut = require("../src/cutLib.js");
 
 describe("#displayMessage", () => {
   it("should display the cut content of each line", () => {
-    const message = { output: "h\nhow ar", error: "" };
     const showResult = message => {
       assert.strictEqual(message.output, "h\nhow ar");
       assert.strictEqual(message.error, "");
