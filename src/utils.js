@@ -14,8 +14,10 @@ const validateUserArgs = function(cmdLineArgs, options, fileFunctions) {
     return { isError: true, errorMessage: error.optionError };
   if (options.delimiter.length != 1)
     return { isError: true, errorMessage: error.delimiterError };
-  if (!fileFunctions.existsFile(options.fileName)) {
-    return { isError: true, errorMessage: error.fileError };
+  if (options.fileName) {
+    if (!fileFunctions.existsFile(options.fileName)) {
+      return { isError: true, errorMessage: error.fileError };
+    }
   }
   return { isError: false, errorType: null };
 };
@@ -31,8 +33,7 @@ const parseInput = function(commandLineArgs) {
 };
 
 const getLines = function(fileContents) {
-  const data = fileContents.split("\n");
-  return data.map(e => [e]);
+  return fileContents.split("\n");
 };
 
 module.exports = {

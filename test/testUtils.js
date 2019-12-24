@@ -18,7 +18,7 @@ describe("#getLines", () => {
   it("should give whole line contents in an array", () => {
     const fileContents = "hello\nhow are you\nI am fine.";
     const actual = utils.getLines(fileContents);
-    const expected = [["hello"], ["how are you"], ["I am fine."]];
+    const expected = ["hello", "how are you", "I am fine."];
     assert.deepStrictEqual(actual, expected);
   });
 });
@@ -159,5 +159,28 @@ describe("#validateUserArgs", () => {
       errorMessage: "cut: todo.txt: No such file or directory"
     };
     assert.deepEqual(actual, expected);
+  });
+
+  it("shouldn't give fileName as a key if cmdLineArgs are even", () => {
+    const options = { delimiter: "e" };
+    const cmdLineArgs = ["-d", "e", "-f", "1"];
+    const callBack = function(content) {
+      assert.deepStrictEqual(content, ["h", "how ar"]);
+    };
+
+    const fileFunctions = {
+      readFile: (path, encode) => {
+        assert.strictEqual(path, "");
+        assert.strictEqual(encode, "utf8");
+        callBack(null, "h\nhow ar");
+      },
+      existsFile: path => {
+        assert.strictEqual(path, "");
+        return true;
+      }
+    };
+    const actual = utils.validateUserArgs(cmdLineArgs, options, fileFunctions);
+    const expected = { isError: false, errorType: null };
+    assert.deepStrictEqual(actual, expected);
   });
 });

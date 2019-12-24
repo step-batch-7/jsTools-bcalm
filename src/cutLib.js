@@ -1,9 +1,18 @@
+const { stdin, stdout } = process;
 const utils = require("./utils.js");
+
+const getStructure = function(lines, delimiter, range) {
+  const formatLines = lines.split(delimiter);
+  if (formatLines.length == 1) return lines;
+  const desiredFields = range.map(element => formatLines[element - 1]);
+  return desiredFields.filter(element => element).join(delimiter);
+};
 
 const displayMessage = function(data, options, showResult) {
   const lines = utils.getLines(data);
-  const formatLines = lines.map(line => line[0].split(options.delimiter));
-  const contents = formatLines.map(text => text[options.fieldValue - 1]);
+  const contents = lines.map(line =>
+    getStructure(line, options.delimiter, options.fieldValue)
+  );
   const message = contents.join("\n");
   showResult({ output: message, error: "" });
 };
@@ -22,5 +31,6 @@ const performAction = function(fileFunc, cmdLineArgs, showResult) {
 
 module.exports = {
   displayMessage,
-  performAction
+  performAction,
+  getStructure
 };

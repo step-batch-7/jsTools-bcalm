@@ -114,3 +114,12 @@ describe("#performAction", () => {
     cut.performAction(fileFunctions, cmdLineArgs, showResult);
   });
 });
+
+describe("#getStructure", () => {
+  it("should give content after separating fields", () => {
+    const lines = "hello\nI";
+    const actual = cut.getStructure(lines, "e", ["2"]);
+    const expected = "llo\nI";
+    assert.deepStrictEqual(actual, expected);
+  });
+});
