@@ -1,65 +1,26 @@
-const error = require("./errorMessage");
+const utils = require("./utils.js");
 
-const validateUserArgs = function(cmdLineArgs, options) {
-  const result = cmdLineArgs.map(e => e.match(/^-f.*/g));
-  if (!result.some(e => e != null))
-    return { isError: true, errorMessage: error.optionError() };
-  if (options.delimiter.length != 1)
-    return { isError: true, errorMessage: error.displayDelimiterError() };
-  return { isError: false, errorType: null };
+const displayMessage = function(data, options, showResult) {
+  const lines = utils.getLines(data);
+  const formatLines = lines.map(line => line[0].split(options.delimiter));
+  const contents = formatLines.map(text => text[options.fieldValue - 1]);
+  const message = contents.join("\n");
+  showResult({ output: message, error: "" });
 };
 
-const parseInput = function(commandLineArgs) {
-  const command = {};
-  command.delimiter = commandLineArgs[commandLineArgs.indexOf("-d") + 1];
-  command.fieldValue = commandLineArgs[commandLineArgs.indexOf("-f") + 1];
-  command.fileName = commandLineArgs[commandLineArgs.length - 1];
-  return command;
-};
-
-const isFileExists = function(fileName, exists) {
-  return exists(fileName);
-};
-
-const loadContents = function(fileName, reader) {
-  return reader(fileName, "utf8");
-};
-
-const getStructuredContents = function(fileContents) {
-  const data = fileContents.split("\n");
-  return data.map(e => [e]);
-};
-
-const formatMessage = function(fileContents, delimiter) {
-  return fileContents.map(line => line[0].split(delimiter));
-};
-
-const displayMessage = function(content, number) {
-  const message = content.map(text => text[number - 1]);
-  return message.join("\n");
-};
-
-const performAction = function(fileFunctions, cmdLineArgs) {
-  const options = parseInput(cmdLineArgs);
-  const validationMessage = validateUserArgs(cmdLineArgs, options);
-  if (validationMessage.isError)
-    return { error: validationMessage.errorMessage, output: "" };
-  if (!isFileExists(options.fileName, fileFunctions.existsFile)) {
-    return { error: error.noFileMessage(options.fileName), output: "" };
+const performAction = function(fileFunc, cmdLineArgs, showResult) {
+  const options = utils.parseInput(cmdLineArgs);
+  const validation = utils.validateUserArgs(cmdLineArgs, options, fileFunc);
+  if (validation.isError) {
+    showResult({ error: validation.errorMessage, output: "" });
+    return;
   }
-  const contents = loadContents(options.fileName, fileFunctions.readFile);
-  const structuredContent = getStructuredContents(contents);
-  const message = formatMessage(structuredContent, options.delimiter);
-  return { output: displayMessage(message, options.fieldValue), error: "" };
+  fileFunc.readFile(options.fileName, "utf8", (err, data) => {
+    displayMessage(data, options, showResult);
+  });
 };
 
 module.exports = {
-  formatMessage,
   displayMessage,
-  getStructuredContents,
-  loadContents,
-  isFileExists,
-  parseInput,
-  performAction,
-  validateUserArgs
+  performAction
 };

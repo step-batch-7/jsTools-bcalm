@@ -1,158 +1,116 @@
-const assert = require("chai").assert;
-const lib = require("../src/cutLib.js");
+const assert = require("assert");
+const cut = require("../src/cutLib.js");
 
 describe("#displayMessage", () => {
-  it("should display the nth field of content", () => {
-    const content = [["h", "llo"], ["how ar", "you"], ["I am fin"]];
-    const actual = lib.displayMessage(content, 1);
-    const expected = "h\nhow ar\nI am fin";
-    assert.strictEqual(actual, expected);
+  it("should display the cut content of each line", () => {
+    const message = { output: "h\nhow ar", error: "" };
+    const showResult = message => {
+      assert.strictEqual(message.output, "h\nhow ar");
+      assert.strictEqual(message.error, "");
+    };
+    const data = "hello\nhow are you";
+    const options = { delimiter: "e", fileName: "todo.txt", fieldValue: [1] };
+    cut.displayMessage(data, options, showResult);
   });
 });
 
-describe("#formatMessage", () => {
-  it("should separate each line content by delimiter", () => {
-    const fileContent = [["hello"], ["how are you"], ["I am fine."]];
-    const actual = lib.formatMessage(fileContent, "e");
-    const expected = [
-      ["h", "llo"],
-      ["how ar", " you"],
-      ["I am fin", "."]
-    ];
-    assert.deepStrictEqual(actual, expected);
-  });
-});
-
-describe("#getStructuredContents", () => {
-  it("should give whole line contents in an array", () => {
-    const fileContents = "hello\nhow are you\nI am fine.";
-    const actual = lib.getStructuredContents(fileContents);
-    const expected = [["hello"], ["how are you"], ["I am fine."]];
-    assert.deepStrictEqual(actual, expected);
-  });
-});
-
-describe("#loadContents", function() {
-  it("should give content of the file with true flag if file exists", function() {
-    const actualValue = lib.loadContents("path", function(path, encode) {
-      assert.strictEqual(path, "path");
-      assert.strictEqual(encode, "utf8");
-      return '{"key": "value"}';
-    });
-    const expectedValue = '{"key": "value"}';
-    assert.deepStrictEqual(actualValue, expectedValue);
-  });
-});
-
-describe("#isFileExists", () => {
-  it("should give true if file is given", () => {
-    const actual = lib.isFileExists("path", function(path) {
-      assert.strictEqual(path, "path");
-      return true;
-    });
-    assert.isTrue(actual);
-  });
-
-  it("should give false if file isn't given", () => {
-    const actual = lib.isFileExists("noFile.txt", function(path) {
-      assert.strictEqual(path, "noFile.txt");
-      return false;
-    });
-    assert.isFalse(actual);
-  });
-});
-
-describe("#parseInput", () => {
-  it("should read the input and separate if there is space b/w delimiter and delimiter option", () => {
-    const cmdLineArgs = ["-d", "e", "-f", "1", "one.txt"];
-    const actual = lib.parseInput(cmdLineArgs);
-    const expected = { delimiter: "e", fieldValue: "1", fileName: "one.txt" };
-    assert.deepStrictEqual(actual, expected);
-  });
-});
-
-describe("performAction", function() {
-  it("should give specific field of each line", function() {
-    const cmdLineArgs = ["-d", "e", "-f", "1", "todo.txt"];
+describe("#performAction", () => {
+  it("should give the specific field of each line of given file", () => {
+    const callBack = function(content) {
+      assert.deepStrictEqual(content, ["h", "how ar"]);
+    };
     const fileFunctions = {
-      readFile: (path, encode) => {
+      readFile: (path, encode, callBack) => {
         assert.strictEqual(path, "todo.txt");
         assert.strictEqual(encode, "utf8");
-        return "[]";
+        callBack(null, "h\nhow ar");
       },
       existsFile: path => {
         assert.strictEqual(path, "todo.txt");
         return true;
       }
     };
-    const actual = lib.performAction(fileFunctions, cmdLineArgs);
-    const expected = { output: "[]", error: "" };
-    assert.deepStrictEqual(actual, expected);
+    const cmdLineArgs = ["-d", "e", "-f", "1", "todo.txt"];
+    const showResult = message => {
+      assert.strictEqual(message.output, "h\nhow ar");
+      assert.strictEqual(message.error, "");
+    };
+    cut.performAction(fileFunctions, cmdLineArgs, showResult);
   });
 
-  it("should give error if there is no file", () => {
-    const cmdLineArgs = ["-d", "e", "-f", "1", "todo.txt"];
+  it("should give delimiter error if bad delimiter is given", () => {
+    const callBack = function(content) {
+      assert.deepStrictEqual(content, ["h", "how ar"]);
+    };
     const fileFunctions = {
       readFile: (path, encode) => {
         assert.strictEqual(path, "todo.txt");
         assert.strictEqual(encode, "utf8");
-        return `cut: ${
-          cmdLineArgs[cmdLineArgs.length - 1]
-        }: No such file or directory`;
+        callBack(null, "h\nhow ar");
+      },
+      existsFile: path => {
+        assert.strictEqual(path, "todo.txt");
+        return true;
+      }
+    };
+    const cmdLineArgs = ["-d", "", "-f", "1", "todo.txt"];
+    const showResult = message => {
+      assert.strictEqual(message.output, "");
+      assert.strictEqual(message.error, "cut: bad delimiter");
+    };
+    cut.performAction(fileFunctions, cmdLineArgs, showResult);
+  });
+
+  it("should give file error if file is not present ", () => {
+    const callBack = function(content) {
+      assert.deepStrictEqual(content, ["h", "how ar"]);
+    };
+    const fileFunctions = {
+      readFile: (path, encode) => {
+        assert.strictEqual(path, "todo.txt");
+        assert.strictEqual(encode, "utf8");
+        callBack(null, "h\nhow ar");
       },
       existsFile: path => {
         assert.strictEqual(path, "todo.txt");
         return false;
       }
     };
-    const actual = lib.performAction(fileFunctions, cmdLineArgs);
-    const expected = {
-      error: "cut: todo.txt: No such file or directory",
-      output: ""
+    const cmdLineArgs = ["-d", "e", "-f", "1", "todo.txt"];
+    const showResult = message => {
+      assert.strictEqual(message.output, "");
+      assert.strictEqual(
+        message.error,
+        "cut: todo.txt: No such file or directory"
+      );
     };
-    assert.deepStrictEqual(actual, expected);
+    cut.performAction(fileFunctions, cmdLineArgs, showResult);
   });
 
-  it("should give error if there is no file", () => {
-    const cmdLineArgs = ["-d", "e", "1", "todo.txt"];
+  it("should five option error if field is not specified", () => {
+    const callBack = function(content) {
+      assert.deepStrictEqual(content, ["h", "how ar"]);
+    };
+
     const fileFunctions = {
       readFile: (path, encode) => {
         assert.strictEqual(path, "todo.txt");
         assert.strictEqual(encode, "utf8");
-        return "[]";
+        callBack(null, "h\nhow ar");
       },
       existsFile: path => {
         assert.strictEqual(path, "todo.txt");
-        return true;
+        return false;
       }
     };
-    const actual = lib.performAction(fileFunctions, cmdLineArgs);
-    const expected = {
-      error:
-        "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]",
-      output: ""
-    };
-    assert.deepStrictEqual(actual, expected);
-  });
-});
-
-describe("#validateUserArgs", () => {
-  it("should give true if input isn't in correct format", () => {
-    const cmdLineArgs = ["-d", "e", "1", "todo.txt"];
-    const actual = lib.validateUserArgs(cmdLineArgs);
-    const expected = {
-      isError: true,
-      errorMessage:
+    const cmdLineArgs = ["-d", "e", "todo.txt"];
+    const showResult = message => {
+      assert.strictEqual(message.output, "");
+      assert.strictEqual(
+        message.error,
         "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]"
+      );
     };
-    assert.deepStrictEqual(actual, expected);
-  });
-
-  it("should give true if input is in correct form", () => {
-    const options = { delimiter: "e" };
-    const cmdLineArgs = ["-d", "e", "-f", "1", "todo.txt"];
-    const actual = lib.validateUserArgs(cmdLineArgs, options);
-    const expected = { isError: false, errorType: null };
-    assert.deepEqual(actual, expected);
+    cut.performAction(fileFunctions, cmdLineArgs, showResult);
   });
 });
