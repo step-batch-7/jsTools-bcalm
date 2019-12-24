@@ -30,6 +30,13 @@ describe("#parseInput", () => {
     const expected = { delimiter: "e", fieldValue: ["1"], fileName: "one.txt" };
     assert.deepStrictEqual(actual, expected);
   });
+
+  it("shouldn't give file name as key if file is not specified", () => {
+    const cmdLineArgs = ["-d", "e", "-f", "1"];
+    const actual = utils.parseInput(cmdLineArgs);
+    const expected = { delimiter: "e", fieldValue: ["1"] };
+    assert.deepStrictEqual(actual, expected);
+  });
 });
 
 describe("#validateUserArgs", () => {
