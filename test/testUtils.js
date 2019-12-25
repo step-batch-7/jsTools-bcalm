@@ -31,10 +31,10 @@ describe("#parseInput", () => {
     assert.deepStrictEqual(actual, expected);
   });
 
-  it("shouldn't give file name as key if file is not specified", () => {
+  it("shouldn't give undefined if file is not given", () => {
     const cmdLineArgs = ["-d", "e", "-f", "1"];
     const actual = utils.parseInput(cmdLineArgs);
-    const expected = { delimiter: "e", fieldValue: "1", fileName: "" };
+    const expected = { delimiter: "e", fieldValue: "1", fileName: undefined };
     assert.deepStrictEqual(actual, expected);
   });
 });

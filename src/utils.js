@@ -23,8 +23,7 @@ const parseInput = function(commandLineArgs) {
   const command = {};
   command.delimiter = commandLineArgs[commandLineArgs.indexOf("-d") + 1];
   command.fieldValue = commandLineArgs[commandLineArgs.indexOf("-f") + 1];
-  command.fileName = commandLineArgs[commandLineArgs.length - 1];
-  if (commandLineArgs.length % 2 == 0) command.fileName = "";
+  command.fileName = commandLineArgs[4];
   return command;
 };
 

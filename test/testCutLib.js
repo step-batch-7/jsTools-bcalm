@@ -86,7 +86,7 @@ describe("#performAction", () => {
     cut.performAction(fileFunctions, cmdLineArgs, showResult);
   });
 
-  it("should five option error if field is not specified", () => {
+  it("should give option error if field is not specified", () => {
     const callBack = function(content) {
       assert.deepStrictEqual(content, ["h", "how ar"]);
     };
