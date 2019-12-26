@@ -8,8 +8,7 @@ const showResult = function(message) {
 
 const main = function() {
   const cmdLineArgs = process.argv.slice(2);
-  const fileFunction = { readFile: fs.readFile, existsFile: fs.existsSync };
-  performAction(fileFunction, cmdLineArgs, showResult);
+  performAction(fs.readFile, cmdLineArgs, showResult);
 };
 
 main();

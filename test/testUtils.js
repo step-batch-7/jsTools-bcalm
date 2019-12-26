@@ -134,32 +134,6 @@ describe("#validateUserArgs", () => {
     const expected = { isError: true, errorMessage: "cut: bad delimiter" };
     assert.deepEqual(actual, expected);
   });
-
-  it("should give file error if file is not present", () => {
-    const options = { delimiter: "e", fileName: "todo.txt" };
-    const cmdLineArgs = ["-d", "e", "-f", "1", "todo.txt"];
-    const callBack = function(content) {
-      assert.deepStrictEqual(content, ["h", "how ar"]);
-    };
-
-    const fileFunctions = {
-      readFile: (path, encode) => {
-        assert.strictEqual(path, "todo.txt");
-        assert.strictEqual(encode, "utf8");
-        callBack(null, "h\nhow ar");
-      },
-      existsFile: path => {
-        assert.strictEqual(path, "todo.txt");
-        return false;
-      }
-    };
-    const actual = utils.validateUserArgs(cmdLineArgs, options, fileFunctions);
-    const expected = {
-      isError: true,
-      errorMessage: "cut: todo.txt: No such file or directory"
-    };
-    assert.deepEqual(actual, expected);
-  });
 });
 
 describe("#createRange", () => {

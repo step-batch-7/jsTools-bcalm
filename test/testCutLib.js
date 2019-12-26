@@ -18,62 +18,50 @@ describe("#performAction", () => {
     const callBack = function(content) {
       assert.deepStrictEqual(content, ["h", "how ar"]);
     };
-    const fileFunctions = {
-      readFile: (path, encode, callBack) => {
-        assert.strictEqual(path, "todo.txt");
-        assert.strictEqual(encode, "utf8");
-        callBack(null, "h\nhow ar");
-      },
-      existsFile: path => {
-        assert.strictEqual(path, "todo.txt");
-        return true;
-      }
+    const reader = (path, encode, callBack) => {
+      assert.strictEqual(path, "todo.txt");
+      assert.strictEqual(encode, "utf8");
+      callBack(null, "h\nhow ar");
     };
     const cmdLineArgs = ["-d", "e", "-f", "1", "todo.txt"];
     const showResult = message => {
       assert.strictEqual(message.output, "h\nhow ar");
       assert.strictEqual(message.error, "");
     };
-    cut.performAction(fileFunctions, cmdLineArgs, showResult);
+    cut.performAction(reader, cmdLineArgs, showResult);
   });
 
   it("should give delimiter error if bad delimiter is given", () => {
     const callBack = function(content) {
       assert.deepStrictEqual(content, ["h", "how ar"]);
     };
-    const fileFunctions = {
-      readFile: (path, encode) => {
-        assert.strictEqual(path, "todo.txt");
-        assert.strictEqual(encode, "utf8");
-        callBack(null, "h\nhow ar");
-      },
-      existsFile: path => {
-        assert.strictEqual(path, "todo.txt");
-        return true;
-      }
+    const reader = (path, encode) => {
+      assert.strictEqual(path, "todo.txt");
+      assert.strictEqual(encode, "utf8");
+      callBack(null, "h\nhow ar");
     };
     const cmdLineArgs = ["-d", "", "-f", "1", "todo.txt"];
     const showResult = message => {
       assert.strictEqual(message.output, "");
       assert.strictEqual(message.error, "cut: bad delimiter");
     };
-    cut.performAction(fileFunctions, cmdLineArgs, showResult);
+    cut.performAction(reader, cmdLineArgs, showResult);
   });
 
   it("should give file error if file is not present ", () => {
     const callBack = function(content) {
-      assert.deepStrictEqual(content, ["h", "how ar"]);
+      assert.deepStrictEqual(content, {
+        error: "cut: todo.txt: No such file or directory",
+        output: ""
+      });
     };
-    const fileFunctions = {
-      readFile: (path, encode) => {
-        assert.strictEqual(path, "todo.txt");
-        assert.strictEqual(encode, "utf8");
-        callBack(null, "h\nhow ar");
-      },
-      existsFile: path => {
-        assert.strictEqual(path, "todo.txt");
-        return false;
-      }
+    const reader = (path, encode) => {
+      assert.strictEqual(path, "todo.txt");
+      assert.strictEqual(encode, "utf8");
+      callBack({
+        error: "cut: todo.txt: No such file or directory",
+        output: ""
+      });
     };
     const cmdLineArgs = ["-d", "e", "-f", "1", "todo.txt"];
     const showResult = message => {
@@ -83,7 +71,7 @@ describe("#performAction", () => {
         "cut: todo.txt: No such file or directory"
       );
     };
-    cut.performAction(fileFunctions, cmdLineArgs, showResult);
+    cut.performAction(reader, cmdLineArgs, showResult);
   });
 
   it("should give option error if field is not specified", () => {
@@ -91,16 +79,10 @@ describe("#performAction", () => {
       assert.deepStrictEqual(content, ["h", "how ar"]);
     };
 
-    const fileFunctions = {
-      readFile: (path, encode) => {
-        assert.strictEqual(path, "todo.txt");
-        assert.strictEqual(encode, "utf8");
-        callBack(null, "h\nhow ar");
-      },
-      existsFile: path => {
-        assert.strictEqual(path, "todo.txt");
-        return false;
-      }
+    const reader = (path, encode) => {
+      assert.strictEqual(path, "todo.txt");
+      assert.strictEqual(encode, "utf8");
+      callBack(null, "h\nhow ar");
     };
     const cmdLineArgs = ["-d", "e", "todo.txt"];
     const showResult = message => {
@@ -110,7 +92,7 @@ describe("#performAction", () => {
         "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]"
       );
     };
-    cut.performAction(fileFunctions, cmdLineArgs, showResult);
+    cut.performAction(reader, cmdLineArgs, showResult);
   });
 });
 
@@ -127,5 +109,25 @@ describe("#getStructure", () => {
     const actual = cut.getStructure(lines, "e", "1,2");
     const expected = "hello\nI";
     assert.deepStrictEqual(actual, expected);
+  });
+});
+
+describe("#loadFileLines", () => {
+  it("should load content of given file", () => {
+    const callBack = function(content) {
+      assert.deepStrictEqual(content, { output: "h\nhow ar", error: "" });
+    };
+
+    const reader = (path, encode) => {
+      assert.strictEqual(path, "todo.txt");
+      assert.strictEqual(encode, "utf8");
+      callBack({ output: "h\nhow ar", error: "" });
+    };
+    const options = { delimiter: "e", fieldValue: 1, fileName: "todo.txt" };
+    const showResult = message => {
+      assert.strictEqual(message.output, "h\nhow ar");
+      assert.deepStrictEqual(message.error, "");
+    };
+    cut.loadFileLines(reader, options, showResult);
   });
 });

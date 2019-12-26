@@ -1,4 +1,3 @@
-const { stdin, stdout } = process;
 const utils = require("./utils.js");
 
 const getStructure = function(lines, delimiter, fieldValue) {
@@ -18,20 +17,36 @@ const displayMessage = function(data, options, showResult) {
   showResult({ output: message, error: "" });
 };
 
-const performAction = function(fileFunc, cmdLineArgs, showResult) {
+const loadFileLines = function(reader, options, showResult) {
+  const errorMessages = {
+    ENOENT: `cut: ${options.fileName}: No such file or directory`,
+    EISDIR: `cut: Error reading ${options.fileName}`
+  };
+  reader(options.fileName, "utf8", (err, data) => {
+    if (err) {
+      showResult({
+        error: errorMessages[err.code],
+        output: ""
+      });
+      return;
+    }
+    displayMessage(data, options, showResult);
+  });
+};
+
+const performAction = function(reader, cmdLineArgs, showResult) {
   const options = utils.parseInput(cmdLineArgs);
-  const validation = utils.validateUserArgs(cmdLineArgs, options, fileFunc);
+  const validation = utils.validateUserArgs(cmdLineArgs, options, reader);
   if (validation.isError) {
     showResult({ error: validation.errorMessage, output: "" });
     return;
   }
-  fileFunc.readFile(options.fileName, "utf8", (err, data) => {
-    displayMessage(data, options, showResult);
-  });
+  loadFileLines(reader, options, showResult);
 };
 
 module.exports = {
   displayMessage,
   performAction,
-  getStructure
+  getStructure,
+  loadFileLines
 };
