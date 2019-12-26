@@ -1,7 +1,7 @@
 const assert = require("assert");
 const cut = require("../src/cutLib.js");
 
-describe("#displayMessage", () => {
+describe("#displayResult", () => {
   it("should display the cut content of each line", () => {
     const showResult = message => {
       assert.strictEqual(message.output, "h\nhow ar");
@@ -9,11 +9,11 @@ describe("#displayMessage", () => {
     };
     const data = "hello\nhow are you";
     const options = { delimiter: "e", fileName: "todo.txt", fieldValue: "1" };
-    cut.displayMessage(data, options, showResult);
+    cut.displayResult(data, options, showResult);
   });
 });
 
-describe("#performAction", () => {
+describe("#executeCut", () => {
   it("should give the specific field of each line of given file", () => {
     const reader = (path, encode, callBack) => {
       assert.strictEqual(path, "todo.txt");
@@ -25,7 +25,7 @@ describe("#performAction", () => {
       assert.strictEqual(message.output, "h\nhow ar");
       assert.strictEqual(message.error, "");
     };
-    cut.performAction(reader, cmdLineArgs, showResult);
+    cut.executeCut(reader, cmdLineArgs, showResult);
   });
 
   it("should give delimiter error if bad delimiter is given", () => {
@@ -39,7 +39,7 @@ describe("#performAction", () => {
       assert.strictEqual(message.output, "");
       assert.strictEqual(message.error, "cut: bad delimiter");
     };
-    cut.performAction(reader, cmdLineArgs, showResult);
+    cut.executeCut(reader, cmdLineArgs, showResult);
   });
 
   it("should give file error if file is not present ", () => {
@@ -56,7 +56,7 @@ describe("#performAction", () => {
         "cut: todo.txt: No such file or directory"
       );
     };
-    cut.performAction(reader, cmdLineArgs, showResult);
+    cut.executeCut(reader, cmdLineArgs, showResult);
   });
 
   it("should give option error if field is not specified", () => {
@@ -73,7 +73,7 @@ describe("#performAction", () => {
         "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]"
       );
     };
-    cut.performAction(reader, cmdLineArgs, showResult);
+    cut.executeCut(reader, cmdLineArgs, showResult);
   });
 });
 

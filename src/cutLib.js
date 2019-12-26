@@ -38,7 +38,7 @@ const cutLines = function(line, delimiter, fieldValue) {
   return desiredFields.filter(element => element).join(delimiter);
 };
 
-const displayMessage = function(fileContent, options, showResult) {
+const displayResult = function(fileContent, options, showResult) {
   const lines = fileContent.split("\n");
   const contents = lines.map(line =>
     cutLines(line, options.delimiter, options.fieldValue)
@@ -60,11 +60,11 @@ const loadFileLines = function(reader, options, showResult) {
       });
       return;
     }
-    displayMessage(fileContent, options, showResult);
+    displayResult(fileContent, options, showResult);
   });
 };
 
-const performAction = function(reader, cmdLineArgs, showResult) {
+const executeCut = function(reader, cmdLineArgs, showResult) {
   const options = parseInput(cmdLineArgs);
   const validation = validateUserArgs(cmdLineArgs, options);
   if (validation.isError) {
@@ -75,8 +75,8 @@ const performAction = function(reader, cmdLineArgs, showResult) {
 };
 
 module.exports = {
-  displayMessage,
-  performAction,
+  displayResult,
+  executeCut,
   cutLines,
   loadFileLines,
   displayError,
