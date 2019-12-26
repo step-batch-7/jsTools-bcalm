@@ -26,10 +26,6 @@ const parseInput = function(commandLineArgs) {
   return command;
 };
 
-const getLines = function(fileContents) {
-  return fileContents.split("\n");
-};
-
 const createRange = function(fieldValue) {
   return fieldValue.split(",");
 };
@@ -43,7 +39,7 @@ const cutLines = function(line, delimiter, fieldValue) {
 };
 
 const displayMessage = function(fileContent, options, showResult) {
-  const lines = getLines(fileContent);
+  const lines = fileContent.split("\n");
   const contents = lines.map(line =>
     cutLines(line, options.delimiter, options.fieldValue)
   );
@@ -57,7 +53,6 @@ const loadFileLines = function(reader, options, showResult) {
     EISDIR: `cut: Error reading ${options.fileName}`
   };
   reader(options.fileName, "utf8", (err, fileContent) => {
-    
     if (err) {
       showResult({
         error: errorMessages[err.code],
@@ -87,6 +82,5 @@ module.exports = {
   displayError,
   validateUserArgs,
   parseInput,
-  getLines,
   createRange
 };

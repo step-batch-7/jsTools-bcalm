@@ -150,15 +150,6 @@ describe("#displayError", () => {
   });
 });
 
-describe("#getLines", () => {
-  it("should give whole line contents in an array", () => {
-    const fileContents = "hello\nhow are you\nI am fine.";
-    const actual = cut.getLines(fileContents);
-    const expected = ["hello", "how are you", "I am fine."];
-    assert.deepStrictEqual(actual, expected);
-  });
-});
-
 describe("#parseInput", () => {
   it("should read the input and separate if there is space b/w delimiter and delimiter option", () => {
     const cmdLineArgs = ["-d", "e", "-f", "1", "one.txt"];
