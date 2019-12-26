@@ -130,4 +130,44 @@ describe("#loadFileLines", () => {
     };
     cut.loadFileLines(reader, options, showResult);
   });
+
+  it("should give file is not present if file is not there", () => {
+    const callBack = function(content) {
+      assert.deepStrictEqual(content, {
+        output: "",
+        error: "cut: foo: No such file or directory "
+      });
+    };
+    const reader = function(path, encode) {
+      assert.strictEqual(path, "foo");
+      assert.strictEqual(encode, "utf8");
+      callBack({ error: "cut: foo: No such file or directory ", output: "" });
+    };
+    const options = { delimiter: "d", fieldValue: 3, fileName: "foo" };
+    const showResult = function(message) {
+      assert.strictEqual(message.output, "");
+      assert.strictEqual(message.error, "cut: foo: No such file or directory ");
+    };
+    cut.loadFileLines(reader, options, showResult);
+  });
+
+  it("should give error when directory name is given in place of directory name", () => {
+    const callBack = function(content) {
+      assert.deepStrictEqual(content, {
+        output: "",
+        error: "cut: Error reading foo"
+      });
+    };
+    const reader = function(path, encode) {
+      assert.strictEqual(path, "foo");
+      assert.strictEqual(encode, "utf8");
+      callBack({ error: "cut: Error reading foo", output: "" });
+    };
+    const options = { delimiter: "d", fieldValue: "1", fileName: "foo" };
+    const showResult = function(message) {
+      assert.strictEqual(message.output, "");
+      assert.strictEqual(message.error, "cut: Error reading foo");
+    };
+    cut.loadFileLines(reader, options, showResult);
+  });
 });
