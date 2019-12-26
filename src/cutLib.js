@@ -1,17 +1,22 @@
-const utils = require("./utils.js");
+const {
+  validateUserArgs,
+  parseInput,
+  getLines,
+  createRange
+} = require("./utils.js");
 
-const getStructure = function(lines, delimiter, fieldValue) {
-  const range = utils.createRange(fieldValue);
-  const formatLines = lines.split(delimiter);
-  if (formatLines.length == 1) return lines;
-  const desiredFields = range.map(element => formatLines[element - 1]);
+const cutLines = function(line, delimiter, fieldValue) {
+  const range = createRange(fieldValue);
+  const getFields = line.split(delimiter);
+  if (getFields.length == 1) return line;
+  const desiredFields = range.map(element => getFields[element - 1]);
   return desiredFields.filter(element => element).join(delimiter);
 };
 
-const displayMessage = function(data, options, showResult) {
-  const lines = utils.getLines(data);
+const displayMessage = function(fileContent, options, showResult) {
+  const lines = getLines(fileContent);
   const contents = lines.map(line =>
-    getStructure(line, options.delimiter, options.fieldValue)
+    cutLines(line, options.delimiter, options.fieldValue)
   );
   const message = contents.join("\n");
   showResult({ output: message, error: "" });
@@ -22,7 +27,7 @@ const loadFileLines = function(reader, options, showResult) {
     ENOENT: `cut: ${options.fileName}: No such file or directory`,
     EISDIR: `cut: Error reading ${options.fileName}`
   };
-  reader(options.fileName, "utf8", (err, data) => {
+  reader(options.fileName, "utf8", (err, fileContent) => {
     if (err) {
       showResult({
         error: errorMessages[err.code],
@@ -30,13 +35,13 @@ const loadFileLines = function(reader, options, showResult) {
       });
       return;
     }
-    displayMessage(data, options, showResult);
+    displayMessage(fileContent, options, showResult);
   });
 };
 
 const performAction = function(reader, cmdLineArgs, showResult) {
-  const options = utils.parseInput(cmdLineArgs);
-  const validation = utils.validateUserArgs(cmdLineArgs, options);
+  const options = parseInput(cmdLineArgs);
+  const validation = validateUserArgs(cmdLineArgs, options);
   if (validation.isError) {
     showResult({ error: validation.errorMessage, output: "" });
     return;
@@ -47,6 +52,6 @@ const performAction = function(reader, cmdLineArgs, showResult) {
 module.exports = {
   displayMessage,
   performAction,
-  getStructure,
+  cutLines,
   loadFileLines
 };

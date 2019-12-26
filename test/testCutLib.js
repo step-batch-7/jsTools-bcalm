@@ -96,17 +96,17 @@ describe("#performAction", () => {
   });
 });
 
-describe("#getStructure", () => {
+describe("#cutLines", () => {
   it("should give content after separating fields", () => {
     const lines = "hello\nI";
-    const actual = cut.getStructure(lines, "e", "2");
+    const actual = cut.cutLines(lines, "e", "2");
     const expected = "llo\nI";
     assert.deepStrictEqual(actual, expected);
   });
 
   it("should give content if separating fields are more than one", () => {
     const lines = "hello\nI";
-    const actual = cut.getStructure(lines, "e", "1,2");
+    const actual = cut.cutLines(lines, "e", "1,2");
     const expected = "hello\nI";
     assert.deepStrictEqual(actual, expected);
   });
