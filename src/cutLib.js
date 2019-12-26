@@ -36,7 +36,7 @@ const loadFileLines = function(reader, options, showResult) {
 
 const performAction = function(reader, cmdLineArgs, showResult) {
   const options = utils.parseInput(cmdLineArgs);
-  const validation = utils.validateUserArgs(cmdLineArgs, options, reader);
+  const validation = utils.validateUserArgs(cmdLineArgs, options);
   if (validation.isError) {
     showResult({ error: validation.errorMessage, output: "" });
     return;

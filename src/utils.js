@@ -7,11 +7,9 @@ const displayError = function(fileName) {
   return error;
 };
 
-const validateUserArgs = function(cmdLineArgs, options, fileFunctions) {
+const validateUserArgs = function(cmdLineArgs, options) {
   const error = displayError(options.fileName);
-  const result = cmdLineArgs.map(e => e.match(/^-f.*/g));
-
-  if (!result.some(element => element != null))
+  if (!cmdLineArgs.includes("-f"))
     return { isError: true, errorMessage: error.optionError };
 
   if (options.delimiter.length != 1)
