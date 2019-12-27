@@ -1,5 +1,6 @@
 const assert = require("chai").assert;
 const cut = require("../src/cutLib.js");
+const EventEmitter = require("events").EventEmitter;
 
 describe("#displayResult", () => {
   it("should display the cut content of each line", () => {
@@ -25,7 +26,7 @@ describe("#cut", () => {
       assert.strictEqual(message.output, "h\nhow ar");
       assert.strictEqual(message.error, "");
     };
-    cut.cut(reader, cmdLineArgs, showResult);
+    cut.cut(cmdLineArgs, showResult, null, reader);
   });
 
   it("should give delimiter error if bad delimiter is given", () => {
@@ -39,7 +40,7 @@ describe("#cut", () => {
       assert.strictEqual(message.output, "");
       assert.strictEqual(message.error, "cut: bad delimiter");
     };
-    cut.cut(reader, cmdLineArgs, showResult);
+    cut.cut(cmdLineArgs, showResult, null, reader);
   });
 
   it("should give file error if file is not present ", () => {
@@ -53,7 +54,7 @@ describe("#cut", () => {
       assert.strictEqual(message.output, "");
       assert.strictEqual(message.error, "cut: todo.txt: No such file or directory");
     };
-    cut.cut(reader, cmdLineArgs, showResult);
+    cut.cut(cmdLineArgs, showResult, null, reader);
   });
 
   it("should give option error if field is not specified", () => {
@@ -70,7 +71,17 @@ describe("#cut", () => {
         "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]"
       );
     };
-    cut.cut(reader, cmdLineArgs, showResult);
+    cut.cut(cmdLineArgs, showResult, null, reader);
+  });
+
+  it("should given specific field for stdin", () => {
+    const cmdLineArgs = ["-d", ",", "-f", "1"];
+    const showResult = function(message) {
+      assert.deepStrictEqual(message, { output: "a\n", error: "" });
+    };
+    const stdinStream = new EventEmitter();
+    cut.cut(cmdLineArgs, showResult, stdinStream);
+    stdinStream.emit("dat", "a,b\n");
   });
 });
 

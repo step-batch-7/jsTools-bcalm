@@ -54,13 +54,27 @@ const loadFileLines = function(reader, options, showResult) {
   reader(options.fileName, "utf8", onCompletion(errorMessages, showResult, options));
 };
 
-const cut = function(reader, cmdLineArgs, showResult) {
+const parseStdIn = function(stdin, options, showResult) {
+  let userInput = "";
+  stdin.on("data", data => {
+    userInput += data;
+    displayResult(userInput, options, showResult);
+  });
+};
+
+const cut = function(cmdLineArgs, showResult, stdin, reader) {
   const options = parseInput(cmdLineArgs);
   const validation = whichError(cmdLineArgs, options);
   if (validation) {
     showResult({ error: validation, output: "" });
     return;
   }
+
+  if (!options.fileName) {
+    parseStdIn(stdin, options, showResult);
+    return;
+  }
+
   loadFileLines(reader, options, showResult);
 };
 

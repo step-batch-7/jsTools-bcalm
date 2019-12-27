@@ -22,7 +22,7 @@ const parseInput = function(commandLineArgs) {
     return commandOption;
   }, {});
 
-  commandOptions.fileName = commandLineArgs[4] || "";
+  commandOptions.fileName = commandLineArgs[4];
   return commandOptions;
 };
 

@@ -1,5 +1,6 @@
 const fs = require("fs");
 const cut = require("./src/cutLib.js").cut;
+const { stdin } = process;
 
 const main = function() {
   const cmdLineArgs = process.argv.slice(2);
@@ -7,7 +8,7 @@ const main = function() {
     process.stdout.write(message.output);
     process.stderr.write(message.error);
   };
-  cut(fs.readFile, cmdLineArgs, showResult);
+  cut(cmdLineArgs, showResult, stdin, fs.readFile);
 };
 
 main();

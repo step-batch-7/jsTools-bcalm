@@ -12,3 +12,13 @@ version 0.1:
 7. getStructuredContents function.
 8. loadContents Function.
 9. parsedInput function.
+-------------------------------------------------------------------------------------------
+
+version 0.2:
+node cut.js -d "e" -f "1"
+1. Write appTest for stdIn
+2. Write test cases for parseStdIn function
+3. Make function parseStdIn
+4. Write test cases for modified function
+5. Modify function cut
+6. Take stdInput by process.stdin
