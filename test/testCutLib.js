@@ -74,14 +74,18 @@ describe("#cut", () => {
     cut.cut(cmdLineArgs, showResult, null, reader);
   });
 
-  it("should given specific field for stdin", () => {
+  it("should given specific field for stdin", done => {
     const cmdLineArgs = ["-d", ",", "-f", "1"];
+    let count = 0;
     const showResult = function(message) {
+      count++;
       assert.deepStrictEqual(message, { output: "a\n", error: "" });
+      done();
     };
     const stdinStream = new EventEmitter();
     cut.cut(cmdLineArgs, showResult, stdinStream);
-    stdinStream.emit("dat", "a,b\n");
+    stdinStream.emit("data", "a,b\n");
+    assert.strictEqual(count, 1);
   });
 });
 

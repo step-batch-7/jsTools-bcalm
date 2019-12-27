@@ -64,9 +64,9 @@ const parseStdIn = function(stdin, options, showResult) {
 
 const cut = function(cmdLineArgs, showResult, stdin, reader) {
   const options = parseInput(cmdLineArgs);
-  const validation = whichError(cmdLineArgs, options);
-  if (validation) {
-    showResult({ error: validation, output: "" });
+  const isValid = whichError(cmdLineArgs, options);
+  if (isValid) {
+    showResult({ error: isValid, output: "" });
     return;
   }
 
