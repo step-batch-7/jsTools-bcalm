@@ -1,25 +1,25 @@
-const getOptions = function(context, element) {
-  if (element.startsWith("-")) {
-    context.push(element);
-    return context;
+const getOptions = function(option, cmdLineArg) {
+  if (cmdLineArg.startsWith("-")) {
+    option.push(cmdLineArg);
+    return option;
   }
 
-  if (Array.isArray(context[context.length - 1])) return context;
+  if (Array.isArray(option[option.length - 1])) return option;
 
-  if (context[context.length - 1].startsWith("-")) {
-    const previousElement = context.pop();
-    context.push([previousElement, element]);
+  if (option[option.length - 1].startsWith("-")) {
+    const previousElement = option.pop();
+    option.push([previousElement, cmdLineArg]);
   }
-  return context;
+  return option;
 };
 
 const parseInput = function(commandLineArgs) {
   const options = commandLineArgs.reduce(getOptions, []);
   const lookup = { "-d": "delimiter", "-f": "fieldValue" };
 
-  const commandOptions = options.reduce((context, option) => {
-    context[lookup[option[0]]] = option[1];
-    return context;
+  const commandOptions = options.reduce((commandOption, option) => {
+    commandOption[lookup[option[0]]] = option[1];
+    return commandOption;
   }, {});
 
   commandOptions.fileName = commandLineArgs[4] || "";
