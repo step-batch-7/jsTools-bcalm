@@ -134,46 +134,30 @@ describe("#loadFileLines", () => {
   });
 });
 
-describe("#getFieldValueError", () => {
-  it("should give string representation of illegal list value", () => {
-    const actual = cut.getFieldValueError("one.txt");
-    const expected = "cut: [-cf] list: illegal list value";
-    assert.deepStrictEqual(actual, expected);
-  });
-});
+// describe("#getFieldValueError", () => {
+//   it("should give string representation of illegal list value", () => {
+//     const actual = cut.getFieldValueError("one.txt");
+//     const expected = "cut: [-cf] list: illegal list value";
+//     assert.deepStrictEqual(actual, expected);
+//   });
+// });
 
-describe("#getOptionError", () => {
-  it("should give string representation of usage options", () => {
-    const actual = cut.getOptionError("one.txt");
-    const expected =
-      "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]";
-    assert.deepStrictEqual(actual, expected);
-  });
-});
+// describe("#getOptionError", () => {
+//   it("should give string representation of usage options", () => {
+//     const actual = cut.getOptionError("one.txt");
+//     const expected =
+//       "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]";
+//     assert.deepStrictEqual(actual, expected);
+//   });
+// });
 
-describe("#getDelimiterError", () => {
-  it("should give bad delimiter", () => {
-    const actual = cut.getDelimiterError("one.txt");
-    const expected = "cut: bad delimiter";
-    assert.deepStrictEqual(actual, expected);
-  });
-});
-
-describe("#parseInput", () => {
-  it("should read the input and separate if there is space b/w delimiter and delimiter option", () => {
-    const cmdLineArgs = ["-d", "e", "-f", "1", "one.txt"];
-    const actual = cut.parseInput(cmdLineArgs);
-    const expected = { delimiter: "e", fieldValue: "1", fileName: "one.txt" };
-    assert.deepStrictEqual(actual, expected);
-  });
-
-  it("shouldn't give undefined if file is not given", () => {
-    const cmdLineArgs = ["-d", "e", "-f", "1"];
-    const actual = cut.parseInput(cmdLineArgs);
-    const expected = { delimiter: "e", fieldValue: "1", fileName: "" };
-    assert.deepStrictEqual(actual, expected);
-  });
-});
+// describe("#getDelimiterError", () => {
+//   it("should give bad delimiter", () => {
+//     const actual = cut.getDelimiterError("one.txt");
+//     const expected = "cut: bad delimiter";
+//     assert.deepStrictEqual(actual, expected);
+//   });
+// });
 
 describe("#whichError", () => {
   it("should give option error if field is not given", () => {
@@ -214,13 +198,13 @@ describe("#whichError", () => {
   });
 });
 
-describe("#getFieldRange", () => {
-  it("should create range of required field of each line", () => {
-    const actual = cut.getFieldRange("1,2,3");
-    const expected = ["1", "2", "3"];
-    assert.deepEqual(actual, expected);
-  });
-});
+// describe("#getFieldRange", () => {
+//   it("should create range of required field of each line", () => {
+//     const actual = cut.getFieldRange("1,2,3");
+//     const expected = ["1", "2", "3"];
+//     assert.deepEqual(actual, expected);
+//   });
+// });
 
 describe("#isInteger", () => {
   it("should check given values are integers or not", () => {

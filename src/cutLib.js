@@ -1,3 +1,5 @@
+const { parseInput } = require("./parseInput.js");
+
 const getFieldValueError = () => "cut: [-cf] list: illegal list value";
 const getDelimiterError = () => "cut: bad delimiter";
 const getOptionError = () =>
@@ -12,14 +14,6 @@ const whichError = function(cmdLineArgs, options) {
   if (!cmdLineArgs.includes("-f")) return getOptionError();
   if (options.delimiter.length != 1) return getDelimiterError();
   if (!isInteger(options.fieldValue)) return getFieldValueError();
-};
-
-const parseInput = function(commandLineArgs) {
-  const command = {};
-  command.delimiter = commandLineArgs[commandLineArgs.lastIndexOf("-d") + 1];
-  command.fieldValue = commandLineArgs[commandLineArgs.lastIndexOf("-f") + 1];
-  command.fileName = commandLineArgs[4] || "";
-  return command;
 };
 
 const getFieldRange = function(fieldValue) {
@@ -54,7 +48,8 @@ const onCompletion = function(errorMessages, showResult, options) {
 const loadFileLines = function(reader, options, showResult) {
   const errorMessages = {
     ENOENT: `cut: ${options.fileName}: No such file or directory`,
-    EISDIR: `cut: Error reading ${options.fileName}`
+    EISDIR: `cut: Error reading ${options.fileName}`,
+    EACCES: "Permission denied"
   };
   reader(options.fileName, "utf8", onCompletion(errorMessages, showResult, options));
 };
@@ -74,11 +69,6 @@ module.exports = {
   cut,
   cutLines,
   loadFileLines,
-  getFieldValueError,
-  getDelimiterError,
-  getOptionError,
-  whichError,
-  parseInput,
-  getFieldRange,
-  isInteger
+  isInteger,
+  whichError
 };
