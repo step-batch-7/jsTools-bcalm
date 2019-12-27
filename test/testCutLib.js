@@ -134,15 +134,27 @@ describe("#loadFileLines", () => {
   });
 });
 
-describe("#getError", () => {
-  it("should return the error object", () => {
-    const actual = cut.getError("one.txt");
-    const expected = {
-      delimiterError: "cut: bad delimiter",
-      fieldValueError: "cut: [-cf] list: illegal list value",
-      optionError:
-        "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]"
-    };
+describe("#getFieldValueError", () => {
+  it("should give string representation of illegal list value", () => {
+    const actual = cut.getFieldValueError("one.txt");
+    const expected = "cut: [-cf] list: illegal list value";
+    assert.deepStrictEqual(actual, expected);
+  });
+});
+
+describe("#getOptionError", () => {
+  it("should give string representation of usage options", () => {
+    const actual = cut.getOptionError("one.txt");
+    const expected =
+      "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]";
+    assert.deepStrictEqual(actual, expected);
+  });
+});
+
+describe("#getDelimiterError", () => {
+  it("should give bad delimiter", () => {
+    const actual = cut.getDelimiterError("one.txt");
+    const expected = "cut: bad delimiter";
     assert.deepStrictEqual(actual, expected);
   });
 });

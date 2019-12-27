@@ -1,11 +1,7 @@
-const getError = function(fileName) {
-  const error = {};
-  error.delimiterError = "cut: bad delimiter";
-  error.fieldValueError = "cut: [-cf] list: illegal list value";
-  error.optionError =
-    "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]";
-  return error;
-};
+const getFieldValueError = () => "cut: [-cf] list: illegal list value";
+const getDelimiterError = () => "cut: bad delimiter";
+const getOptionError = () =>
+  "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]";
 
 const isInteger = function(values) {
   const range = getFieldRange(values);
@@ -13,10 +9,9 @@ const isInteger = function(values) {
 };
 
 const whichError = function(cmdLineArgs, options) {
-  const error = getError(options.fileName);
-  if (!cmdLineArgs.includes("-f")) return error.optionError;
-  if (options.delimiter.length != 1) return error.delimiterError;
-  if (!isInteger(options.fieldValue)) return error.fieldValueError;
+  if (!cmdLineArgs.includes("-f")) return getOptionError();
+  if (options.delimiter.length != 1) return getDelimiterError();
+  if (!isInteger(options.fieldValue)) return getFieldValueError();
 };
 
 const parseInput = function(commandLineArgs) {
@@ -79,7 +74,9 @@ module.exports = {
   cut,
   cutLines,
   loadFileLines,
-  getError,
+  getFieldValueError,
+  getDelimiterError,
+  getOptionError,
   whichError,
   parseInput,
   getFieldRange,
