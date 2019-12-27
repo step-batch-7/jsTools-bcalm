@@ -1,4 +1,4 @@
-const assert = require("assert");
+const assert = require("chai").assert;
 const cut = require("../src/cutLib.js");
 
 describe("#displayResult", () => {
@@ -13,7 +13,7 @@ describe("#displayResult", () => {
   });
 });
 
-describe("#executeCut", () => {
+describe("#cut", () => {
   it("should give the specific field of each line of given file", () => {
     const reader = (path, encode, callBack) => {
       assert.strictEqual(path, "todo.txt");
@@ -25,7 +25,7 @@ describe("#executeCut", () => {
       assert.strictEqual(message.output, "h\nhow ar");
       assert.strictEqual(message.error, "");
     };
-    cut.executeCut(reader, cmdLineArgs, showResult);
+    cut.cut(reader, cmdLineArgs, showResult);
   });
 
   it("should give delimiter error if bad delimiter is given", () => {
@@ -39,7 +39,7 @@ describe("#executeCut", () => {
       assert.strictEqual(message.output, "");
       assert.strictEqual(message.error, "cut: bad delimiter");
     };
-    cut.executeCut(reader, cmdLineArgs, showResult);
+    cut.cut(reader, cmdLineArgs, showResult);
   });
 
   it("should give file error if file is not present ", () => {
@@ -51,12 +51,9 @@ describe("#executeCut", () => {
     const cmdLineArgs = ["-d", "e", "-f", "1", "todo.txt"];
     const showResult = message => {
       assert.strictEqual(message.output, "");
-      assert.strictEqual(
-        message.error,
-        "cut: todo.txt: No such file or directory"
-      );
+      assert.strictEqual(message.error, "cut: todo.txt: No such file or directory");
     };
-    cut.executeCut(reader, cmdLineArgs, showResult);
+    cut.cut(reader, cmdLineArgs, showResult);
   });
 
   it("should give option error if field is not specified", () => {
@@ -73,7 +70,7 @@ describe("#executeCut", () => {
         "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]"
       );
     };
-    cut.executeCut(reader, cmdLineArgs, showResult);
+    cut.cut(reader, cmdLineArgs, showResult);
   });
 });
 
@@ -137,12 +134,12 @@ describe("#loadFileLines", () => {
   });
 });
 
-describe("#displayError", () => {
+describe("#getError", () => {
   it("should return the error object", () => {
-    const actual = cut.displayError("one.txt");
+    const actual = cut.getError("one.txt");
     const expected = {
-      fileError: "cut: one.txt: No such file or directory",
       delimiterError: "cut: bad delimiter",
+      fieldValueError: "cut: [-cf] list: illegal list value",
       optionError:
         "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]"
     };
@@ -166,85 +163,61 @@ describe("#parseInput", () => {
   });
 });
 
-describe("#validateUserArgs", () => {
+describe("#whichError", () => {
   it("should give option error if field is not given", () => {
     const cmdLineArgs = ["-d", "e", "1", "todo.txt"];
-    const options = { fileName: "todo.txt" };
-    const callBack = function(content) {
-      assert.deepStrictEqual(content, ["h", "how ar"]);
-    };
-    const fileFunctions = {
-      readFile: (path, encode) => {
-        assert.strictEqual(path, "todo.txt");
-        assert.strictEqual(encode, "utf8");
-        callBack(null, "h\nhow ar");
-      }
-    };
-    const actual = cut.validateUserArgs(cmdLineArgs, options, fileFunctions);
-    const expected = {
-      isError: true,
-      errorMessage:
-        "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]"
-    };
-    assert.deepStrictEqual(actual, expected);
-  });
+    const options = { fileName: "todo.txt", fieldValue: "1" };
 
-  it("should give true if input is in correct format ", () => {
-    const options = { delimiter: "e", fileName: "todo.txt" };
-    const cmdLineArgs = ["-d", "e", "-f", "1", "todo.txt"];
-    const callBack = function(content) {
-      assert.deepStrictEqual(content, ["h", "how ar"]);
-    };
-
-    const fileFunctions = {
-      readFile: (path, encode) => {
-        assert.strictEqual(path, "todo.txt");
-        assert.strictEqual(encode, "utf8");
-        callBack(null, "h\nhow ar");
-      }
-    };
-    const actual = cut.validateUserArgs(cmdLineArgs, options, fileFunctions);
-    const expected = { isError: false, errorType: null };
-    assert.deepEqual(actual, expected);
+    const actual = cut.whichError(cmdLineArgs, options);
+    const expected =
+      "usage: cut -b list [-n] [file ...]\ncut -c list [file ...]\ncut -f list [-s] [-d delim] [file ...]";
+    assert.strictEqual(actual, expected);
   });
 
   it("should give delimiter error if delimiter is null", () => {
     const options = { delimiter: "", fileName: "todo.txt" };
-    const cmdLineArgs = ["-d", "e", "-f", "1", "todo.txt"];
+    const cmdLineArgs = ["-d", "", "-f", "1", "todo.txt"];
 
-    const fileFunctions = {
-      readFile: (path, encode, callBack) => {
-        assert.strictEqual(path, "todo.txt");
-        assert.strictEqual(encode, "utf8");
-        callBack(null, "h\nhow ar");
-      }
-    };
-    const actual = cut.validateUserArgs(cmdLineArgs, options, fileFunctions);
-    const expected = { isError: true, errorMessage: "cut: bad delimiter" };
-    assert.deepEqual(actual, expected);
+    const actual = cut.whichError(cmdLineArgs, options);
+    const expected = "cut: bad delimiter";
+    assert.strictEqual(actual, expected);
   });
 
   it("should give delimiter error if delimiter is more than one character", () => {
     const options = { delimiter: "acx", fileName: "todo.txt" };
-    const cmdLineArgs = ["-d", "e", "-f", "1", "todo.txt"];
+    const cmdLineArgs = ["-d", "acx", "-f", "1", "todo.txt"];
 
-    const fileFunctions = {
-      readFile: (path, encode, callBack) => {
-        assert.strictEqual(path, "todo.txt");
-        assert.strictEqual(encode, "utf8");
-        callBack, (null, "h\nhow ar");
-      }
-    };
-    const actual = cut.validateUserArgs(cmdLineArgs, options, fileFunctions);
-    const expected = { isError: true, errorMessage: "cut: bad delimiter" };
+    const actual = cut.whichError(cmdLineArgs, options);
+    const expected = "cut: bad delimiter";
+    assert.strictEqual(actual, expected);
+  });
+
+  it("should give field value error if field values are not integers", () => {
+    const options = { delimiter: "a", fieldValue: "hello", fileName: "todo.txt" };
+    const cmdLineArgs = ["-d", "acx", "-f", "hello", "todo.txt"];
+
+    const actual = cut.whichError(cmdLineArgs, options);
+    const expected = "cut: [-cf] list: illegal list value";
+    assert.strictEqual(actual, expected);
+  });
+});
+
+describe("#getFieldRange", () => {
+  it("should create range of required field of each line", () => {
+    const actual = cut.getFieldRange("1,2,3");
+    const expected = ["1", "2", "3"];
     assert.deepEqual(actual, expected);
   });
 });
 
-describe("#createRange", () => {
-  it("should create range of required field of each line", () => {
-    const actual = cut.createRange("1,2,3");
-    const expected = ["1", "2", "3"];
-    assert.deepEqual(actual, expected);
+describe("#isInteger", () => {
+  it("should check given values are integers or not", () => {
+    const actual = cut.isInteger("1,2,3");
+    assert.isTrue(actual);
+  });
+
+  it("should check given value is integer or not", () => {
+    const actual = cut.isInteger("1");
+    assert.isTrue(actual);
   });
 });
