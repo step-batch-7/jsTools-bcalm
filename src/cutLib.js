@@ -55,10 +55,9 @@ const loadFileLines = function(reader, options, showResult) {
 };
 
 const parseStdIn = function(stdin, options, showResult) {
-  let userInput = "";
   stdin.on("data", data => {
-    userInput += data;
-    displayResult(userInput, options, showResult);
+    data += "";
+    displayResult(data, options, showResult);
   });
 };
 

@@ -6,10 +6,8 @@ const getOptions = function(option, cmdLineArg) {
 
   if (Array.isArray(option[option.length - 1])) return option;
 
-  if (option[option.length - 1].startsWith("-")) {
-    const previousElement = option.pop();
-    option.push([previousElement, cmdLineArg]);
-  }
+  const previousElement = option.pop();
+  option.push([previousElement, cmdLineArg]);
   return option;
 };
 
@@ -26,4 +24,4 @@ const parseInput = function(commandLineArgs) {
   return commandOptions;
 };
 
-module.exports = { parseInput };
+module.exports = { parseInput, getOptions };
