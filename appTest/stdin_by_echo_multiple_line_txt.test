@@ -1,0 +1,5 @@
+echo "hello\nhow are you\nI am fine.\nWhat about you" | node cut.js -d "e" -f 1
+h
+how ar
+I am fin
+What about you

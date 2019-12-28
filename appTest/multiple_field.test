@@ -1,0 +1,5 @@
+node cut.js -d "e" -f 1,2 appTest/one.txt
+hello
+how are you?
+I am fine.
+What about you?

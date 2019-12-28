@@ -1,0 +1,5 @@
+cat appTest/one.txt | node cut.js -d "e" -f 1
+h
+how ar
+I am fin
+What about you?
