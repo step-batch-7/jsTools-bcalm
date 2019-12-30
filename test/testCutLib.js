@@ -16,12 +16,13 @@ describe('#displayResult', () => {
 });
 
 describe('#cut', () => {
-  it('should give the specific field of each line of given file', () => {
+  it('should give the specific field of each line of given file', done => {
     const cmdLineArgs = ['-d', 'e', '-f', '1', 'todo.txt'];
     const streams = new EventEmitter();
     const showResult = message => {
       assert.strictEqual(message.output, 'h\nhow ar');
       assert.strictEqual(message.error, '');
+      done();
     };
     cut.cut(cmdLineArgs, showResult, streams);
     streams.emit('data', 'hello\nhow are you');
@@ -38,13 +39,14 @@ describe('#cut', () => {
     cut.cut(cmdLineArgs, showResult, streams);
   });
 
-  it('should give file error if file is not present ', () => {
+  it('should give file error if file is not present ', done => {
     const streams = new EventEmitter();
     const cmdLineArgs = ['-d', 'e', '-f', '1', 'todo.txt'];
     const showResult = message => {
       assert.strictEqual(message.output, '');
       const expectedError = 'cut: todo.txt: No such file or directory';
       assert.strictEqual(message.error, expectedError);
+      done();
     };
     cut.cut(cmdLineArgs, showResult, streams);
     streams.emit('error', {code: 'ENOENT'});

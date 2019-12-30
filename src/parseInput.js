@@ -3,8 +3,8 @@ const getOptions = function(option, cmdLineArg) {
     option.push(cmdLineArg);
     return option;
   }
-  const lastElementIndex = 1;
-  if (Array.isArray(option[option.length - lastElementIndex])) {return option;}
+  const lastElementIndex = option.length - 1;
+  if (Array.isArray(option[lastElementIndex])) {return option;}
 
   const previousElement = option.pop();
   option.push([previousElement, cmdLineArg]);
