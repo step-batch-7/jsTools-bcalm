@@ -4,9 +4,9 @@ const { stdin } = process;
 
 const main = function() {
   const [,, ...cmdLineArgs] = process.argv;
-  const showResult = function(message) {
-    process.stdout.write(message.output);
-    process.stderr.write(message.error);
+  const showResult = function(result) {
+    process.stdout.write(result.output);
+    process.stderr.write(result.error);
   };
   const streams = {
     fileStream: fs.createReadStream,

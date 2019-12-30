@@ -41,12 +41,12 @@ const cutLines = function(line, delimiter, fieldValue) {
   return desiredFields.filter(element => element).join(delimiter);
 };
 
-const displayResult = function(fileContent, options, showResult) {
+const getResult = function(fileContent, options, showResult) {
   const lines = fileContent.split('\n');
   const { delimiter, fieldValue } = options;
   const contents = lines.map(line => cutLines(line, delimiter, fieldValue));
-  const message = contents.join('\n');
-  showResult({ output: message, error: '' });
+  const result = contents.join('\n');
+  showResult({ output: result, error: '' });
 };
 
 const loadStreamLine = function(inputStream, options, showResult){
@@ -57,7 +57,7 @@ const loadStreamLine = function(inputStream, options, showResult){
   };
   inputStream.on('data', data => {
     data += '';
-    displayResult(data, options, showResult);
+    getResult(data, options, showResult);
   });
 
   inputStream.on('error', err => {
@@ -66,10 +66,10 @@ const loadStreamLine = function(inputStream, options, showResult){
   });
 };
  
-const getInputStream = function(stream, fileName){
-  let inputStream = stream.stdin;
+const getInputStream = function(streams, fileName){
+  let inputStream = streams.stdin;
   if(fileName){
-    inputStream = stream.fileStream(fileName);
+    inputStream = streams.fileStream(fileName);
   }
   return inputStream;
 };
@@ -85,7 +85,7 @@ const cut = function(cmdLineArgs, showResult, inputStream) {
 };
 
 module.exports = {
-  displayResult,
+  getResult,
   cut,
   cutLines,
   isInteger,
