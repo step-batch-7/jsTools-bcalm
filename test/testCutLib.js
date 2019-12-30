@@ -1,4 +1,5 @@
 const assert = require('chai').assert;
+const {Readable} = require('stream');
 const cut = require('../src/cutLib.js');
 const EventEmitter = require('events').EventEmitter;
 
@@ -16,54 +17,41 @@ describe('#displayResult', () => {
 
 describe('#cut', () => {
   it('should give the specific field of each line of given file', () => {
-    const reader = (path, encode, callBack) => {
-      assert.strictEqual(path, 'todo.txt');
-      assert.strictEqual(encode, 'utf8');
-      callBack(null, 'h\nhow ar');
-    };
     const cmdLineArgs = ['-d', 'e', '-f', '1', 'todo.txt'];
+    const streams = new EventEmitter();
     const showResult = message => {
       assert.strictEqual(message.output, 'h\nhow ar');
       assert.strictEqual(message.error, '');
     };
-    cut.cut(cmdLineArgs, showResult, null, reader);
+    cut.cut(cmdLineArgs, showResult, streams);
+    streams.emit('data', 'hello\nhow are you');
   });
 
+
   it('should give delimiter error if bad delimiter is given', () => {
-    const reader = (path, encode, callBack) => {
-      assert.strictEqual(path, 'todo.txt');
-      assert.strictEqual(encode, 'utf8');
-      callBack(null, 'h\nhow ar');
-    };
+    const streams = null;
     const cmdLineArgs = ['-d', '', '-f', '1', 'todo.txt'];
     const showResult = message => {
       assert.strictEqual(message.output, '');
       assert.strictEqual(message.error, 'cut: bad delimiter');
     };
-    cut.cut(cmdLineArgs, showResult, null, reader);
+    cut.cut(cmdLineArgs, showResult, streams);
   });
 
   it('should give file error if file is not present ', () => {
-    const reader = (path, encode, callBack) => {
-      assert.strictEqual(path, 'todo.txt');
-      assert.strictEqual(encode, 'utf8');
-      callBack({ code: 'ENOENT' });
-    };
+    const streams = new EventEmitter();
     const cmdLineArgs = ['-d', 'e', '-f', '1', 'todo.txt'];
     const showResult = message => {
       assert.strictEqual(message.output, '');
       const expectedError = 'cut: todo.txt: No such file or directory';
       assert.strictEqual(message.error, expectedError);
     };
-    cut.cut(cmdLineArgs, showResult, null, reader);
+    cut.cut(cmdLineArgs, showResult, streams);
+    streams.emit('error', {code: 'ENOENT'});
   });
 
   it('should give option error if field is not specified', () => {
-    const reader = (path, encode, callBack) => {
-      assert.strictEqual(path, 'todo.txt');
-      assert.strictEqual(encode, 'utf8');
-      callBack(null, 'h\nhow ar');
-    };
+    const streams = null;
     const cmdLineArgs = ['-d', 'e', 'todo.txt'];
     const showResult = message => {
       assert.strictEqual(message.output, '');
@@ -72,7 +60,7 @@ describe('#cut', () => {
         'usage: cut -f list [-s] [-d delim] [file ...]'
       );
     };
-    cut.cut(cmdLineArgs, showResult, null, reader);
+    cut.cut(cmdLineArgs, showResult, streams);
   });
 
   it('should given specific field for stdin', done => {
@@ -107,49 +95,6 @@ describe('#cutLines', () => {
   });
 });
 
-describe('#loadFileLines', () => {
-  it('should load content of given file', () => {
-    const reader = (path, encode, callBack) => {
-      assert.strictEqual(path, 'todo.txt');
-      assert.strictEqual(encode, 'utf8');
-      callBack(null, 'h\nhow ar');
-    };
-    const options = { delimiter: 'e', fieldValue: '1', fileName: 'todo.txt' };
-    const showResult = message => {
-      assert.strictEqual(message.output, 'h\nhow ar');
-      assert.deepStrictEqual(message.error, '');
-    };
-    cut.loadFileLines(reader, options, showResult);
-  });
-
-  it('should give file is not present if file is not there', () => {
-    const reader = function(path, encode, callBack) {
-      assert.strictEqual(path, 'foo');
-      assert.strictEqual(encode, 'utf8');
-      callBack({ code: 'ENOENT' });
-    };
-    const options = { delimiter: 'd', fieldValue: '3', fileName: 'foo' };
-    const showResult = function(message) {
-      assert.strictEqual(message.output, '');
-      assert.strictEqual(message.error, 'cut: foo: No such file or directory');
-    };
-    cut.loadFileLines(reader, options, showResult);
-  });
-
-  it('should give error when directory name is given ', () => { 
-    const reader = function(path, encode, callBack) {
-      assert.strictEqual(path, 'foo');
-      assert.strictEqual(encode, 'utf8');
-      callBack({ code: 'EISDIR' });
-    };
-    const options = { delimiter: 'd', fieldValue: '1', fileName: 'foo' };
-    const showResult = function(message) {
-      assert.strictEqual(message.output, '');
-      assert.strictEqual(message.error, 'cut: Error reading foo');
-    };
-    cut.loadFileLines(reader, options, showResult);
-  });
-});
 
 describe('#whichError', () => {
   it('should give option error if field is not given', () => {
@@ -202,19 +147,24 @@ describe('#isInteger', () => {
   });
 });
 
-describe('#parseStdIn', () => {
-  it('should take standard input and give specific field', done => {
-    const options = { delimiter: ',', fieldValue: '1', fileName: undefined };
-    let count = 0;
-    const showResult = function(message) {
-      count++;
-      assert.deepStrictEqual(message, { output: 'a\n', error: '' });
-      done();
+describe('#getInputStream', () => {
+  it('should give fileStream if fileName is given', () => {
+    const fileInputStream = new Readable();
+    const stream = {
+      fileStream: () => fileInputStream,
+      stdin: new Readable({_read: function(){}})
     };
-    const stdinStream = new EventEmitter();
-    cut.parseStdIn(stdinStream, options, showResult);
-    stdinStream.emit('data', 'a,b\n');
-    const expectedCount = 1;
-    assert.strictEqual(count, expectedCount);
+    const actual = cut.getInputStream(stream, 'todo.txt');
+    assert.strictEqual(actual, fileInputStream);
+  });
+
+  it('should give stdin stream if fileName is not given', () => {
+    const fileInputStream = new Readable();
+    const stream =  {
+      fileStream: () => fileInputStream,
+      stdin: new Readable({_read: function(){}})
+    };
+    const actual = cut.getInputStream(stream, undefined);
+    assert.strictEqual(actual, stream.stdin);
   });
 });

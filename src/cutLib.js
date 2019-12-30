@@ -37,7 +37,7 @@ const cutLines = function(line, delimiter, fieldValue) {
     return line;
   }
   const index = 1;
-  const desiredFields = range.map(element => getFields[element - index]);
+  const desiredFields = range.map(element => getFields[element -index]);
   return desiredFields.filter(element => element).join(delimiter);
 };
 
@@ -49,55 +49,47 @@ const displayResult = function(fileContent, options, showResult) {
   showResult({ output: message, error: '' });
 };
 
-const onCompletion = function(errorMessages, showResult, options) {
-  return (err, fileContent) => {
-    if (err) {
-      showResult({ error: errorMessages[err.code], output: '' });
-      return;
-    }
-    displayResult(fileContent, options, showResult);
-  };
-};
-
-const loadFileLines = function(reader, options, showResult) {
-  const { fileName } = options;
+const loadStreamLine = function(inputStream, options, showResult){
   const errorMessages = {
     ENOENT: `cut: ${options.fileName}: No such file or directory`,
     EISDIR: `cut: Error reading ${options.fileName}`,
     EACCES: 'Permission denied'
   };
-  reader(fileName, 'utf8', onCompletion(errorMessages, showResult, options));
-};
-
-const parseStdIn = function(stdin, options, showResult) {
-  stdin.on('data', data => {
+  inputStream.on('data', data => {
     data += '';
     displayResult(data, options, showResult);
   });
+
+  inputStream.on('error', err => {
+    
+    showResult({error: errorMessages[err.code], output: ''});
+  });
+};
+ 
+const getInputStream = function(stream, fileName){
+  let inputStream = stream.stdin;
+  if(fileName){
+    inputStream = stream.fileStream(fileName);
+  }
+  return inputStream;
 };
 
-const cut = function(cmdLineArgs, showResult, stdin, reader) {
+const cut = function(cmdLineArgs, showResult, inputStream) {
   const options = parseInput(cmdLineArgs);
   const isValid = whichError(cmdLineArgs, options);
   if (isValid) {
     showResult({ error: isValid, output: '' });
     return;
   }
-
-  if (!options.fileName) {
-    parseStdIn(stdin, options, showResult);
-    return;
-  }
-
-  loadFileLines(reader, options, showResult);
+  loadStreamLine(inputStream, options, showResult);
 };
 
 module.exports = {
   displayResult,
   cut,
   cutLines,
-  loadFileLines,
   isInteger,
   whichError,
-  parseStdIn
+  loadStreamLine,
+  getInputStream
 };

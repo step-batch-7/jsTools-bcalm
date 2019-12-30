@@ -1,5 +1,5 @@
 const fs = require('fs');
-const cut = require('./src/cutLib.js').cut;
+const {cut, getInputStream} = require('./src/cutLib.js');
 const { stdin } = process;
 
 const main = function() {
@@ -8,7 +8,13 @@ const main = function() {
     process.stdout.write(message.output);
     process.stderr.write(message.error);
   };
-  cut(cmdLineArgs, showResult, stdin, fs.readFile);
+  const streams = {
+    fileStream: fs.createReadStream,
+    stdin
+  };
+  const fileNameIndex = 4;
+  const inputStream = getInputStream(streams, cmdLineArgs[fileNameIndex]);
+  cut(cmdLineArgs, showResult, inputStream );
 };
 
 main();
