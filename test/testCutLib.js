@@ -115,7 +115,7 @@ describe('#loadFileLines', () => {
       callBack(null, 'h\nhow ar');
     };
     const options = { delimiter: 'e', fieldValue: '1', fileName: 'todo.txt' };
-  const showResult = message => {
+    const showResult = message => {
       assert.strictEqual(message.output, 'h\nhow ar');
       assert.deepStrictEqual(message.error, '');
     };
