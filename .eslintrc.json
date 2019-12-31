@@ -14,13 +14,27 @@
     "ecmaVersion": 2018
   },
   "rules": {
-    "indent": ["error", 2],
-    "quotes": ["error", "single"],
-    "linebreak-style": ["error", "unix"],
-    "semi": ["error", "always"],
+    "indent": [
+      "error",
+      2
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "semi": [
+      "error",
+      "always"
+    ],
     "camelcase": "error",
     "class-methods-use-this": "warn",
-    "array-bracket-spacing": ["error"],
+    "array-bracket-spacing": [
+      "error"
+    ],
     "comma-spacing": "error",
     "arrow-spacing": "error",
     "no-var": "error",
@@ -48,7 +62,10 @@
     "no-useless-return": "error",
     "max-depth": "error",
     "no-mixed-operators": "error",
-    "complexity": ["error", 4],
+    "complexity": [
+      "error",
+      4
+    ],
     "no-extra-parens": "error",
     "no-template-curly-in-string": "error",
     "array-callback-return": "error",
@@ -59,6 +76,21 @@
     "no-loop-func": "error",
     "no-proto": "error",
     "prefer-spread": "warn",
-    "no-useless-call": "error"
+    "no-useless-call": "error",
+    "space-infix-ops": [
+      "error",
+      {
+        "int32Hint": false
+      }
+    ],
+    "no-multi-spaces": "error",
+    "object-curly-spacing": "error",
+    "semi-spacing": "error",
+    "no-multiple-empty-lines": [
+      "error",
+      {
+        "max": 1
+      }
+    ]
   }
 }

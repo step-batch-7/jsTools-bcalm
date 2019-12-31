@@ -1,4 +1,4 @@
-const { parseInput } = require('./parseInput.js');
+const {parseInput} = require('./parseInput.js');
 
 const getFieldValueError = () => 'cut: [-cf] list: illegal list value';
 const getDelimiterError = () => 'cut: bad delimiter';
@@ -14,9 +14,9 @@ const whichError = function(cmdLineArgs, options) {
     return getOptionError();
   }
 
-  const delimiterLength = 1;
+  const expectedDelimiterLength = 1;
 
-  if (options.delimiter.length !== delimiterLength) {
+  if (options.delimiter.length !== expectedDelimiterLength) {
     return getDelimiterError();
   }
 
@@ -31,22 +31,22 @@ const getFieldRange = function(fieldValue) {
 
 const cutLines = function(line, delimiter, fieldValue) {
   const range = getFieldRange(fieldValue);
-  const getFields = line.split(delimiter);
-  const noDelimiterLength = 1;
-  if (getFields.length === noDelimiterLength) {
+  const fields = line.split(delimiter);
+  const lineLength = 1;
+  if (fields.length === lineLength) {
     return line;
   }
   const index = 1;
-  const desiredFields = range.map(element => getFields[element -index]);
+  const desiredFields = range.map(element => fields[element - index]);  
   return desiredFields.filter(element => element).join(delimiter);
 };
 
-const getResult = function(fileContent, options, showResult) {
+const getFormattedResult = function(fileContent, options, showResult) {
   const lines = fileContent.split('\n');
-  const { delimiter, fieldValue } = options;
+  const {delimiter, fieldValue} = options;
   const contents = lines.map(line => cutLines(line, delimiter, fieldValue));
   const result = contents.join('\n');
-  showResult({ output: result, error: '' });
+  showResult({output: result, error: ''});
 };
 
 const loadStreamLine = function(inputStream, options, showResult){
@@ -57,11 +57,10 @@ const loadStreamLine = function(inputStream, options, showResult){
   };
   inputStream.on('data', data => {
     data += '';
-    getResult(data, options, showResult);
+    getFormattedResult(data, options, showResult);
   });
 
   inputStream.on('error', err => {
-    
     showResult({error: errorMessages[err.code], output: ''});
   });
 };
@@ -78,14 +77,14 @@ const cut = function(cmdLineArgs, showResult, inputStream) {
   const options = parseInput(cmdLineArgs);
   const isValid = whichError(cmdLineArgs, options);
   if (isValid) {
-    showResult({ error: isValid, output: '' });
+    showResult({error: isValid, output: ''});
     return;
   }
   loadStreamLine(inputStream, options, showResult);
 };
 
 module.exports = {
-  getResult,
+  getFormattedResult,
   cut,
   cutLines,
   isInteger,

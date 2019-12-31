@@ -1,21 +1,22 @@
-const getOptions = function(option, cmdLineArg) {
+const getOptions = function(options, cmdLineArg) {
   if (cmdLineArg.startsWith('-')) {
-    option.push(cmdLineArg);
-    return option;
+    options.push(cmdLineArg);
+    return options;
   }
-  const lastElementIndex = option.length - 1;
-  if (Array.isArray(option[lastElementIndex])) {return option;}
+  const index = 1;
+  const lastElementIndex = options.length - index;
+  if (Array.isArray(options[lastElementIndex])) {return options;}
 
-  const previousElement = option.pop();
-  option.push([previousElement, cmdLineArg]);
-  return option;
+  const previousElement = options.pop();
+  options.push([previousElement, cmdLineArg]);
+  return options;
 };
 
 const parseInput = function(commandLineArgs) {
   const optionIndex = 0;
   const optionArgIndex = 1;
   const options = commandLineArgs.reduce(getOptions, []);
-  const lookup = { '-d': 'delimiter', '-f': 'fieldValue' };
+  const lookup = {'-d': 'delimiter', '-f': 'fieldValue'};
 
   const commandOptions = options.reduce((commandOption, option) => {
     commandOption[lookup[option[optionIndex]]] = option[optionArgIndex];
@@ -27,4 +28,4 @@ const parseInput = function(commandLineArgs) {
   return commandOptions;
 };
 
-module.exports = { parseInput, getOptions };
+module.exports = {parseInput, getOptions};
