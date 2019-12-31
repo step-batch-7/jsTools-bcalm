@@ -1,8 +1,6 @@
 const assert = require('chai').assert;
 const sinon = require('sinon');
-const {Readable} = require('stream');
 const cut = require('../src/performCut.js');
-const EventEmitter = require('events').EventEmitter;
 
 describe('#getFormattedResult', () => {
   it('should display the cut content of each line', () => {
