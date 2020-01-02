@@ -11,7 +11,7 @@ EOF
 chmod +x .git/hooks/pre-commit  
 
 cat <<EOF > .git/hooks/pre-push  
-npm test     
+npm run allTests     
 if [ \$? != 0 ]; then 
     exit 1
 fi

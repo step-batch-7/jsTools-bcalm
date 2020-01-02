@@ -1,1 +1,0 @@
-nyc mocha &&  npx eslint src test cut.js && ./runAppTests.sh appTest/*.test 
