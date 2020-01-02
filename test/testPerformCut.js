@@ -8,7 +8,7 @@ describe('#getFormattedResult', () => {
     const data = 'hello\nhow are you';
     const options = {delimiter: 'e', fileName: 'todo.txt', fieldValue: '1'};
     cut.getFormattedResult(data, options, showResult);
-    assert(showResult.calledOnceWith({output: 'h\nhow ', error: ''}));
+    assert(showResult.calledOnceWith({output: 'h\nhow ar', error: ''}));
   });
 });
 
@@ -83,6 +83,13 @@ describe('#cutLines', () => {
     const actual = cut.cutLines(lines, 'e', '1,2');
     const expected = 'hello\nI';
     assert.deepStrictEqual(actual, expected);
+  });
+
+  it('should give all content if there is no delimiter on that line', () => {
+    const line = 'hello';
+    const actual = cut.cutLines(line, '1', '1');
+    const expected = 'hello';
+    assert.strictEqual(actual, expected);
   });
 });
 
