@@ -92,5 +92,17 @@
         "max": 1
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "test*.js"
+      ],
+      "rules": {
+        "no-magic-numbers": "off",
+        "max-len": "off",
+        "max-statements": "off"
+      }
+    }
+  ]
 }
