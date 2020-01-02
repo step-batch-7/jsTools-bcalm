@@ -5,7 +5,9 @@ const getOptions = function(options, cmdLineArg) {
   }
   const index = 1;
   const lastElementIndex = options.length - index;
-  if (Array.isArray(options[lastElementIndex])) {return options;}
+  if (Array.isArray(options[lastElementIndex])) {
+    return options;
+  }
 
   const previousElement = options.pop();
   options.push([previousElement, cmdLineArg]);

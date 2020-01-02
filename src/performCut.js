@@ -56,8 +56,9 @@ const loadStreamLine = function(inputStream, options, showResult){
     EACCES: 'Permission denied'
   };
   inputStream.on('data', data => {
-    data += '';
-    getFormattedResult(data, options, showResult);
+    let userInput = '';
+    userInput += data;
+    getFormattedResult(userInput, options, showResult);
   });
 
   inputStream.on('error', err => {
