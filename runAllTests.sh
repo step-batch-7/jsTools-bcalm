@@ -1,1 +1,1 @@
-mocha && ./runAppTests.sh appTest/*.test
+mocha &&  npx eslint src test cut.js && ./runAppTests.sh appTest/*.test 

@@ -8,7 +8,7 @@ describe('#getFormattedResult', () => {
     const data = 'hello\nhow are you';
     const options = {delimiter: 'e', fileName: 'todo.txt', fieldValue: '1'};
     cut.getFormattedResult(data, options, showResult);
-    assert(showResult.calledOnceWith({output: 'h\nhow ar', error: ''}));
+    assert(showResult.calledOnceWith({output: 'h\nhow ', error: ''}));
   });
 });
 
