@@ -14,14 +14,12 @@
     "chai": "^4.2.0",
     "eslint": "^6.8.0",
     "mocha": "^6.2.2",
-    "pre-commit": "^1.2.2",
     "sinon": "^8.0.2"
   },
   "scripts": {
-    "test": "./runAllTests.sh",
-    "allTest": "./runAppTests.sh appTest/*.test && mocha",
-    "eslint": "eslint *.js src test",
-    "preCommit": "npm run allTest && npm run eslint"
+    "test": "mocha && eslint src test",
+    "allTest": "mocha && ./runAppTests.sh appTest/*.test",
+    "lint": "curl -s  https://raw.githubusercontent.com/blpabhishek/eslintrc-config/master/.eslintrc.json -o .eslintrc.json && eslint src test *.js"
   },
   "repository": {
     "type": "git",
