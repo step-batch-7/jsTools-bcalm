@@ -18,7 +18,10 @@
     "sinon": "^8.0.2"
   },
   "scripts": {
-    "test": "./runAllTests.sh"
+    "test": "./runAllTests.sh",
+    "allTest": "./runAppTests.sh appTest/*.test && mocha",
+    "eslint": "eslint *.js src test",
+    "preCommit": "npm run allTest && npm run eslint"
   },
   "repository": {
     "type": "git",
