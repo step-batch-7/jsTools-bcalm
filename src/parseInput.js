@@ -14,20 +14,23 @@ const getOptions = function(options, cmdLineArg) {
   return options;
 };
 
-const parseInput = function(commandLineArgs) {
-  const optionIndex = 0;
-  const optionArgIndex = 1;
-  const options = commandLineArgs.reduce(getOptions, []);
-  const lookup = {'-d': 'delimiter', '-f': 'fieldValue'};
+class OptionParser {
+  constructor(optionLookup) {
+    this.optionLookup = optionLookup;
+  }
+  parse(commandLineArgs) {
+    const optionIndex = 0;
+    const optionArgIndex = 1;
+    const options = commandLineArgs.reduce(getOptions, []);
+    const commandOptions = options.reduce((option, options) => {
+      option[this.optionLookup[options[optionIndex]]] = options[optionArgIndex];
+      return option;
+    }, {});
 
-  const commandOptions = options.reduce((commandOption, option) => {
-    commandOption[lookup[option[optionIndex]]] = option[optionArgIndex];
-    return commandOption;
-  }, {});
+    const fileIndex = 4;
+    commandOptions.fileName = commandLineArgs[fileIndex];
+    return commandOptions;
+  }
+}
 
-  const fileIndex = 4;
-  commandOptions.fileName = commandLineArgs[fileIndex];
-  return commandOptions;
-};
-
-module.exports = {parseInput, getOptions};
+module.exports = {OptionParser, getOptions};

@@ -1,4 +1,4 @@
-const {parseInput} = require('./parseInput.js');
+const {OptionParser} = require('./parseInput.js');
 
 const getFieldValueError = () => 'cut: [-cf] list: illegal list value';
 const getDelimiterError = () => 'cut: bad delimiter';
@@ -74,8 +74,10 @@ const getInputStream = function(streams, fileName){
   return inputStream;
 };
 
-const cut = function(cmdLineArgs, showResult, inputStream) {
-  const options = parseInput(cmdLineArgs);
+const cut = function (cmdLineArgs, showResult, inputStream) {
+  const optionLookup = {'-d': 'delimiter', '-f': 'fieldValue'};
+  const option = new OptionParser(optionLookup);
+  const options = option.parse(cmdLineArgs);
   const isValid = whichError(cmdLineArgs, options);
   if (isValid) {
     showResult({error: isValid, output: ''});
