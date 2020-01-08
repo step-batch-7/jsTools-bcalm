@@ -17,7 +17,8 @@
     "sinon": "^8.0.2"
   },
   "scripts": {
-    "test": "./runAllTests.sh"
+    "test": "mocha && npx eslint src test *.js",
+    "allTests": "./runAppTests.sh appTest/*.test && npm test"
   },
   "repository": {
     "type": "git",

@@ -3,9 +3,10 @@ const sinon = require('sinon');
 const cut = require('../src/performCut.js');
 
 describe('#getFormattedResult', () => {
+  
   it('should display the cut content of each line', () => {
-    const showResult = sinon.fake();
     const data = 'hello\nhow are you';
+    const showResult = sinon.fake();
     const options = {delimiter: 'e', fileName: 'todo.txt', fieldValue: '1'};
     cut.getFormattedResult(data, options, showResult);
     assert(showResult.calledOnceWith({output: 'h\nhow ar', error: ''}));
@@ -13,24 +14,24 @@ describe('#getFormattedResult', () => {
 });
 
 describe('#cut', () => {
-  it('should give the specific field of each line of given file', () => {
-    const cmdLineArgs = ['-d', 'e', '-f', '1', 'todo.txt'];
-    const eventIndex = 0;
-    const callbackIndex = 1;
-    const streams = {
+  let showResult;
+  let streams;
+  beforeEach(() => {
+    showResult = sinon.fake();
+    streams = {
       on: sinon.fake()
     };
-    const showResult = sinon.fake();
+  });
+  it('should give the specific field of each line of given file', () => {
+    const cmdLineArgs = ['-d', 'e', '-f', '1', 'todo.txt'];
     cut.cut(cmdLineArgs, showResult, streams);
-    assert.strictEqual(streams.on.firstCall.args[eventIndex], 'data');
-    streams.on.firstCall.args[callbackIndex]('hello\nhow are you');
+    assert.strictEqual(streams.on.firstCall.args[0], 'data');
+    streams.on.firstCall.args[1]('hello\nhow are you');
     assert(showResult.calledOnceWith({output: 'h\nhow ar', error: ''}));
   });
 
   it('should give delimiter error if bad delimiter is given', () => {
-    const streams = null;
     const cmdLineArgs = ['-d', '', '-f', '1', 'todo.txt'];
-    const showResult = sinon.fake();
     cut.cut(cmdLineArgs, showResult, streams);
     const result = {output: '', error: 'cut: bad delimiter'};
     assert(showResult.calledOnceWith(result));
@@ -38,8 +39,6 @@ describe('#cut', () => {
 
   it('should give file error if file is not present ', () => {
     const cmdLineArgs = ['-d', 'e', '-f', '1', 'todo.txt'];
-    const streams = {on: sinon.fake()};
-    const showResult = sinon.fake();
     cut.cut(cmdLineArgs, showResult, streams);
     assert.strictEqual(streams.on.firstCall.args[0], 'data');
     assert.strictEqual(streams.on.secondCall.args[0], 'error');
@@ -49,24 +48,18 @@ describe('#cut', () => {
   });
   
   it('should give option error if field is not specified', () => {
-    const streams = null;
     const cmdLineArgs = ['-d', 'e', 'todo.txt'];
-    const showResult = sinon.fake();
     cut.cut(cmdLineArgs, showResult, streams);
     const optionErrorMessage = 'usage: cut -f list [-s] [-d delim] [file ...]';
     assert(showResult.calledOnceWith({output: '', error: optionErrorMessage}));
   });
   
-  it('should given specific field for stdin', done => {
+  it('should given specific field for stdin', () => {
     const cmdLineArgs = ['-d', ',', '-f', '1'];
-    const showResult = sinon.fake(() => {
-      assert(showResult.calledOnceWith({output: 'a\nc', error: ''}));
-      done();
-    });
-    const stdinStream = {on: sinon.fake()};
-    cut.cut(cmdLineArgs, showResult, stdinStream);
-    assert.strictEqual(stdinStream.on.firstCall.args[0], 'data');
-    stdinStream.on.firstCall.args[1]('a,b\nc,d');
+    cut.cut(cmdLineArgs, showResult, streams);
+    assert.strictEqual(streams.on.firstCall.args[0], 'data');
+    streams.on.firstCall.args[1]('a,b\nc,d');
+    assert(showResult.calledOnceWith({output: 'a\nc', error: ''}));
   });
 });
 
@@ -129,18 +122,6 @@ describe('#whichError', () => {
     const actual = cut.whichError(cmdLineArgs, options);
     const expected = 'cut: [-cf] list: illegal list value';
     assert.strictEqual(actual, expected);
-  });
-});
-
-describe('#isInteger', () => {
-  it('should check given values are integers or not', () => {
-    const actual = cut.isInteger('1,2,3');
-    assert.isTrue(actual);
-  });
-
-  it('should check given value is integer or not', () => {
-    const actual = cut.isInteger('1');
-    assert.isTrue(actual);
   });
 });
 

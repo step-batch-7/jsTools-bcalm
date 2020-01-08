@@ -4,7 +4,7 @@ const getFieldValueError = () => 'cut: [-cf] list: illegal list value';
 const getDelimiterError = () => 'cut: bad delimiter';
 const getOptionError = () => 'usage: cut -f list [-s] [-d delim] [file ...]';
 
-const isInteger = function(values) {
+const areIntegers = function(values) {
   const range = getFieldRange(values);
   return range.every(field => Number.isInteger(+field));
 };
@@ -20,7 +20,7 @@ const whichError = function(cmdLineArgs, options) {
     return getDelimiterError();
   }
 
-  if (!isInteger(options.fieldValue)) {
+  if (!areIntegers(options.fieldValue)) {
     return getFieldValueError();
   }
 };
@@ -88,7 +88,6 @@ module.exports = {
   getFormattedResult,
   cut,
   cutLines,
-  isInteger,
   whichError,
   loadStreamLine,
   getInputStream

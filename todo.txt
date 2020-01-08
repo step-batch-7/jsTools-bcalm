@@ -22,3 +22,15 @@ node cut.js -d "e" -f "1"
 4. Write test cases for modified function
 5. Modify function cut
 6. Take stdInput by process.stdin
+
+-------------------------------------------------------------------------------------------
+
+version 0.3:
+node cut.js -d "e" -f 1-2,3-4 one.txt
+
+1. Write appTests based on multiple field range
+2. Write test cases for createRange function.
+3. Modify function createRange function.
+4. Write test cases for cut function.
+5. Modify function cut.
+
