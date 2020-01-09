@@ -1,17 +1,11 @@
-const getOptions = function(options, cmdLineArg) {
-  if (cmdLineArg.startsWith('-')) {
-    options.push(cmdLineArg);
-    return options;
-  }
-  const index = 1;
-  const lastElementIndex = options.length - index;
-  if (Array.isArray(options[lastElementIndex])) {
-    return options;
-  }
+const isOption = function (argument) {
+  return argument.startsWith('-');
+  
+};
 
-  const previousElement = options.pop();
-  options.push([previousElement, cmdLineArg]);
-  return options;
+const getKey = function (options) {
+  const key = Object.keys(options).find(value => options[value] === null);
+  return key;
 };
 
 class OptionParser {
@@ -19,18 +13,24 @@ class OptionParser {
     this.optionLookup = optionLookup;
   }
   parse(commandLineArgs) {
-    const optionIndex = 0;
-    const optionArgIndex = 1;
-    const options = commandLineArgs.reduce(getOptions, []);
-    const commandOptions = options.reduce((option, options) => {
-      option[this.optionLookup[options[optionIndex]]] = options[optionArgIndex];
-      return option;
+    const options = commandLineArgs.reduce((options, option) => {
+      const key = getKey(options, option);
+
+      if (key) {
+        options[key] = option;
+      }
+
+      if (isOption(option)) {
+        options[this.optionLookup[option] || option] = null;
+      }
+
+      return options;
     }, {});
 
     const fileIndex = 4;
-    commandOptions.fileName = commandLineArgs[fileIndex];
-    return commandOptions;
+    options.fileName = commandLineArgs[fileIndex];
+    return options;
   }
 }
 
-module.exports = {OptionParser, getOptions};
+module.exports = {OptionParser};

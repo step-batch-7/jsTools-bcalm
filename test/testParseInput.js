@@ -1,5 +1,5 @@
 const assert = require('chai').assert;
-const {OptionParser, getOptions} = require('../src/parseInput.js');
+const {OptionParser} = require('../src/parseInput.js');
 
 describe('#OptionParser', () => {
   describe('#parser', () => {
@@ -22,22 +22,3 @@ describe('#OptionParser', () => {
   });
 });
   
-describe('#getOptions', () => {
-  it('should give array which includes option', () => {
-    const actual = getOptions([], '-d');
-    const expected = ['-d'];
-    assert.deepStrictEqual(actual, expected);
-  });
-
-  it('should make pair of options and their values', () => {
-    const actual = getOptions(['-d'], '1');
-    const expected = [['-d', '1']];
-    assert.deepStrictEqual(actual, expected);
-  });
-
-  it('should not make pair of given element if it is not an option', () => {
-    const actual = getOptions([['-d', '1']], 'hello.txt');
-    const expected = [['-d', '1']];
-    assert.deepStrictEqual(actual, expected);
-  });
-});
